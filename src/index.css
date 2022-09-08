@@ -1,0 +1,42 @@
+@tailwind base;
+
+@layer base {
+  h1 {
+    @apply text-3xl;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  h4 {
+    @apply text-lg;
+  }
+
+  h5 {
+    @apply text-base;
+  }
+
+  h6 {
+    @apply text-sm;
+  }
+
+  a {
+    @apply no-underline;
+  }
+}
+
+@tailwind components;
+@tailwind utilities;
+
+html {
+  font-family: 'Mukta', sans-serif;
+}
+
+body {
+  @apply font-normal text-base;
+}
