@@ -1,11 +1,10 @@
 import clsx from 'clsx'
-import { InputHTMLAttributes } from 'react'
 
 interface TextFieldProps {
   className?: string
   icon?: React.ReactNode
   fullWidth?: boolean
-  inputProps?: InputHTMLAttributes<HTMLInputElement>
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>
 }
 
 export default function TextField({
@@ -18,14 +17,13 @@ export default function TextField({
     <div
       className={clsx(
         'flex items-center gap-3 px-3 rounded-lg bg-gray-100',
-        fullWidth && 'w-full',
+        fullWidth ? 'w-full' : 'w-fit',
         className
       )}
     >
       {icon && <span className="text-gray-400">{icon}</span>}
       <input
         className="w-full py-2 outline-none font-medium bg-transparent placeholder:text-gray-400"
-        type="text"
         {...inputProps}
       />
     </div>

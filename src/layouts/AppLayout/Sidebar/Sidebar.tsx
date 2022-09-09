@@ -28,7 +28,7 @@ const navItems: NavItemData[] = [
 
 export default function Sidebar() {
   return (
-    <aside className="min-w-[200px] w-full max-w-[20%] bg-blue-500 py-10">
+    <aside className="min-w-[250px] w-full max-w-[18%] bg-blue-500 py-10">
       <h3 className="text-center font-medium text-white">Expenso</h3>
       <ul className="mt-10 flex flex-col gap-5">
         {navItems.map((navItem, idx) => (

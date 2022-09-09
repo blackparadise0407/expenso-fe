@@ -26,7 +26,7 @@ export default withAuthenticationRequired(
     return (
       <div className="flex h-screen">
         <Sidebar />
-        <main className="flex-1 px-5 py-10">
+        <main className="flex-1 px-10 py-10 overflow-y-auto">
           <Navigation />
           <Outlet />
         </main>

@@ -12,4 +12,9 @@ declare global {
     createdAt: Date
     updatedAt: Date
   }
+
+  interface PaginatedQuery {
+    pageSize: number
+    pageIndex: number
+  }
 }

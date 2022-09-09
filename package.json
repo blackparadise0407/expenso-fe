@@ -18,9 +18,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "recharts": "^2.1.14",
+    "use-query-params": "^2.1.0"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^4.2.3",
     "@types/node": "^18.7.15",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
