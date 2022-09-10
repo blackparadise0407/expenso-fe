@@ -58,6 +58,7 @@ module.exports = {
     'no-console': 'warn',
     eqeqeq: ['error', 'always'],
     '@typescript-eslint/no-non-null-assertion': 'off',
+    'react/prop-types': 'off',
   },
   settings: {
     'import/resolver': {
