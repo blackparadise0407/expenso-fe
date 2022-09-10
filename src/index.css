@@ -28,9 +28,32 @@
   a {
     @apply no-underline;
   }
+
+  label {
+    @apply font-semibold text-gray-700 text-base;
+  }
 }
 
 @tailwind components;
+
+@layer components {
+  .form-group {
+    @apply flex flex-col items-start gap-1;
+  }
+
+  .form-error {
+    @apply text-sm font-medium text-red-500;
+  }
+
+  .btn {
+    @apply text-gray-900 bg-white hover:bg-gray-100 border border-transparent focus:ring-2 focus:outline-none focus:ring-gray-100 font-bold rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center transition-colors;
+  }
+
+  .btn--primary {
+    @apply bg-blue-500 text-white hover:bg-blue-400;
+  }
+}
+
 @tailwind utilities;
 
 html {

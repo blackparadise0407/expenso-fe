@@ -3,9 +3,10 @@ import { PaginatedApiResponse } from './interfaces'
 
 const ENDPOINT = '/transactions'
 
-interface CreateTransactionDTO {
-  id: string
-}
+type CreateTransactionDTO = Pick<
+  Transaction,
+  'amount' | 'category' | 'income' | 'name' | 'transactionDate'
+>
 
 interface TransactionsQuery extends PaginatedQuery {
   income?: boolean
@@ -22,5 +23,5 @@ export const transactionsApi = {
   getAll: (queries: TransactionsQuery) =>
     httpClient<PaginatedApiResponse<Transaction>>('get', ENDPOINT, queries),
   create: (payload: CreateTransactionDTO) =>
-    httpClient('post', ENDPOINT, payload),
+    httpClient<Transaction>('post', ENDPOINT, payload),
 }

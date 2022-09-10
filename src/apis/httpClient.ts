@@ -3,6 +3,15 @@ import qs from 'query-string'
 
 import { env } from '@/constants'
 
+interface HttpError {
+  path: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  errors: any
+  message: string
+  status: number
+  timestamp: number
+}
+
 const client = axios.create({
   baseURL: env.api.baseUrl,
   headers: {
@@ -20,7 +29,13 @@ export const attachAccessToken = (accessToken: string) =>
 client.interceptors.response.use(
   (response) => response.data,
   (err: AxiosError) => {
-    return Promise.reject(err.message)
+    const error = err.response?.data as HttpError
+    const errors = error.errors
+    let computedMessage = ''
+    if (Array.isArray(errors)) {
+      computedMessage = Object.values(errors[0].errors)[0] as string
+    }
+    return Promise.reject(computedMessage || error.message || err.message)
   }
 )
 

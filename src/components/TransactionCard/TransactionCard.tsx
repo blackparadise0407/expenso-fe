@@ -28,7 +28,7 @@ export default function TransactionCard({ data }: TransactionCardProps) {
         )}
       >
         {data.income ? '+' : '-'}{' '}
-        {new Intl.NumberFormat('vi-VN', {
+        {new Intl.NumberFormat('us', {
           style: 'currency',
           currency: 'VND',
         }).format(data.amount)}

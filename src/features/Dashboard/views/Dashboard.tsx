@@ -17,7 +17,7 @@ import {
 import { NumberParam, useQueryParams } from 'use-query-params'
 
 import { transactionsApi } from '@/apis/transactions'
-import { TextField } from '@/components/TextField'
+import { CreateTransactionCard } from '@/components/CreateTransactionCard'
 import { TransactionCard } from '@/components/TransactionCard'
 
 interface TransactionListProps {
@@ -44,7 +44,7 @@ const CustomTooltip = ({
           )}
         >
           {transaction.income ? '+' : '-'}
-          {Intl.NumberFormat('vi', {
+          {Intl.NumberFormat('us', {
             style: 'currency',
             currency: 'VND',
           }).format(payload[0].value!)}
@@ -113,7 +113,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-5">
-      <div className="flex gap-5 flex-wrap lg:flex-nowrap">
+      <div className="mt-5 flex gap-5 flex-wrap lg:flex-nowrap">
         <ResponsiveContainer
           className="bg-white rounded-lg shadow lg:order-1 order-2"
           width="100%"
@@ -148,7 +148,7 @@ export default function Dashboard() {
             />
             <YAxis
               tickFormatter={(value) =>
-                Intl.NumberFormat('vi', {
+                Intl.NumberFormat('us', {
                   notation: 'compact',
                   style: 'currency',
                   currency: 'VND',
@@ -176,40 +176,8 @@ export default function Dashboard() {
             />
           </AreaChart>
         </ResponsiveContainer>
-        <div className="h-[200px] min-w-full lg:min-w-[35%] max-w-[500px] lg:max-w-full order-1 lg:order-2">
-          <div className="p-3 space-y-5 grid grid-cols-2 rounded-lg shadow bg-white">
-            <TextField
-              className="col-span-2"
-              fullWidth
-              inputProps={{
-                placeholder: 'Enter name...',
-              }}
-            />
-            <TextField
-              className="col-span-1"
-              inputProps={{
-                onKeyDown: (e) => {
-                  if (!/^[0-9]*$/.test(e.key) && e.key !== 'Backspace') {
-                    e.preventDefault()
-                  }
-                },
-                placeholder: 'Enter amount...',
-                onBlur: (e) => {
-                  const val = e.target.value.split(',').join('')
-                  e.target.value = Intl.NumberFormat('us').format(
-                    parseInt(val) || 0
-                  )
-                },
-              }}
-            />
-            <div className="col-span-1">
-              <label htmlFor="">
-                <input type="checkbox" name="" id="" />
-                Income
-              </label>
-            </div>
-            <button className="col-span-2">Add transaction</button>
-          </div>
+        <div className="min-w-full lg:min-w-[35%] max-w-[500px] lg:max-w-full order-1 lg:order-2">
+          <CreateTransactionCard />
         </div>
       </div>
       <p className="font-bold text-xl">Top transactions</p>
@@ -221,7 +189,7 @@ export default function Dashboard() {
         </span>
         <span className="font-medium text-gray-400">
           Value:{' '}
-          {Intl.NumberFormat('vi', {
+          {Intl.NumberFormat('us', {
             style: 'currency',
             currency: 'VND',
           }).format(

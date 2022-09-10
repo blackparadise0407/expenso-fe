@@ -10,31 +10,36 @@ import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
 
 import App from './app/App'
 import { env } from './constants'
+import { ToastProvider } from './contexts/ToastContext'
 import './index.css'
 import { queryClient } from './queryClient'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <Auth0Provider
-        domain={env.auth0.domain}
-        clientId={env.auth0.clientId}
-        audience={env.auth0.audience}
-        redirectUri={window.location.origin}
-      >
-        <QueryClientProvider client={queryClient}>
-          <QueryParamProvider
-            adapter={ReactRouter6Adapter}
-            options={{
-              searchStringToObject: parse,
-              objectToSearchString: stringify,
-            }}
-          >
-            <App />
-          </QueryParamProvider>
-          {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-        </QueryClientProvider>
-      </Auth0Provider>
+      <ToastProvider>
+        <Auth0Provider
+          domain={env.auth0.domain}
+          clientId={env.auth0.clientId}
+          audience={env.auth0.audience}
+          redirectUri={window.location.origin}
+        >
+          <QueryClientProvider client={queryClient}>
+            <QueryParamProvider
+              adapter={ReactRouter6Adapter}
+              options={{
+                searchStringToObject: parse,
+                objectToSearchString: stringify,
+              }}
+            >
+              <App />
+            </QueryParamProvider>
+            {import.meta.env.DEV && (
+              <ReactQueryDevtools initialIsOpen={false} />
+            )}
+          </QueryClientProvider>
+        </Auth0Provider>
+      </ToastProvider>
     </BrowserRouter>
   </React.StrictMode>
 )
