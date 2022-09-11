@@ -24,7 +24,6 @@ interface DatePickerProps {
 
 export default forwardRef<HTMLInputElement, DatePickerProps>(
   function DatePicker({ value, onChange = () => {}, fullWidth = false }, ref) {
-    const [selected, setSelected] = useState<Date | undefined>(value)
     const [open, setOpen] = useState(false)
     const divRef = useRef<HTMLDivElement>(null)
     const datePickerRef = useRef<HTMLDivElement>(null)
@@ -46,7 +45,6 @@ export default forwardRef<HTMLInputElement, DatePickerProps>(
     }, [open, window.innerWidth])
 
     const handleSelect = (date?: Date) => {
-      setSelected(date)
       onChange(date)
       if (date) {
         setOpen(false)
@@ -62,9 +60,9 @@ export default forwardRef<HTMLInputElement, DatePickerProps>(
           ref={ref}
           fullWidth={fullWidth}
           icon={<MdCalendarToday />}
-          className={clsx(selected ? 'text-gray-900' : 'text-gray-400')}
+          className={clsx(value ? 'text-gray-900' : 'text-gray-400')}
           inputProps={{
-            value: selected ? dayjs(selected).format('DD/MM/YYYY') : undefined,
+            defaultValue: value ? dayjs(value).format('DD/MM/YYYY') : undefined,
             readOnly: true,
             placeholder: 'dd/mm/yyyy',
             onClick: () => setOpen(true),
@@ -79,7 +77,7 @@ export default forwardRef<HTMLInputElement, DatePickerProps>(
             <DayPicker
               className="m-2"
               mode="single"
-              selected={selected}
+              selected={value}
               onSelect={handleSelect}
             />
           </div>
