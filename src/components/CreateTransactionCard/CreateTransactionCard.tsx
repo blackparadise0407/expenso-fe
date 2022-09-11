@@ -89,6 +89,7 @@ export default function CreateTransactionCard() {
         <TextField
           fullWidth
           inputProps={{
+            autoComplete: 'off',
             ...register('amount', {
               required: 'Amount is required',
               min: {
