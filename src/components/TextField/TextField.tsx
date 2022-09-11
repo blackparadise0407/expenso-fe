@@ -23,7 +23,7 @@ export default forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
       {icon && <span className="text-gray-400">{icon}</span>}
       <input
         ref={ref}
-        className="w-full py-2 outline-none font-medium bg-transparent placeholder:text-gray-400 peer z-[1]"
+        className="w-full py-2 outline-none font-medium bg-transparent placeholder:text-gray-400 placeholder:text-sm peer z-[1]"
         {...inputProps}
       />
       <div className="absolute top-0 left-0 w-full h-full rounded-lg peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-200"></div>

@@ -56,7 +56,9 @@ export default forwardRef<HTMLDivElement, SelectProps>(function Select(
         ref={ref}
       >
         {!innerVal ? (
-          placeholder && <p className="text-gray-400 truncate">{placeholder}</p>
+          placeholder && (
+            <p className="text-gray-400 truncate text-sm">{placeholder}</p>
+          )
         ) : (
           <div className="truncate">
             {options[options.findIndex((it) => it.value === innerVal)].label}

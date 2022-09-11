@@ -11,6 +11,7 @@ declare global {
     category: string
     createdAt: Date
     updatedAt: Date
+    parsedTransactionDate?: string
   }
 
   interface PaginatedQuery {

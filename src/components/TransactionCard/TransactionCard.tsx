@@ -2,6 +2,8 @@ import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { MdClose } from 'react-icons/md'
 
+import { currencyFormat } from '@/utils/utils'
+
 interface TransactionCardProps {
   data: Transaction
 }
@@ -27,11 +29,7 @@ export default function TransactionCard({ data }: TransactionCardProps) {
           data.income ? 'text-green-500' : 'text-red-500'
         )}
       >
-        {data.income ? '+' : '-'}{' '}
-        {new Intl.NumberFormat('us', {
-          style: 'currency',
-          currency: 'VND',
-        }).format(data.amount)}
+        {data.income ? '+' : '-'} {currencyFormat(data.amount)}
       </p>
       <div className="flex gap-2">
         <div className="p-2 bg-blue-50 rounded-lg cursor-pointer">

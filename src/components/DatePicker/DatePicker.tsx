@@ -64,10 +64,9 @@ export default forwardRef<HTMLInputElement, DatePickerProps>(
           icon={<MdCalendarToday />}
           className={clsx(selected ? 'text-gray-900' : 'text-gray-400')}
           inputProps={{
-            value: selected
-              ? dayjs(selected).format('DD/MM/YYYY')
-              : 'DD/MM/YYYY',
+            value: selected ? dayjs(selected).format('DD/MM/YYYY') : undefined,
             readOnly: true,
+            placeholder: 'dd/mm/yyyy',
             onClick: () => setOpen(true),
           }}
         />

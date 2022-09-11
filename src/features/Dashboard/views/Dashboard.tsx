@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { memo, useEffect } from 'react'
+import { Fragment, memo, useEffect, useMemo } from 'react'
+import { MdMoreHoriz } from 'react-icons/md'
 import { useLocation } from 'react-router-dom'
 import {
   Area,
@@ -19,6 +20,7 @@ import { NumberParam, useQueryParams } from 'use-query-params'
 import { transactionsApi } from '@/apis/transactions'
 import { CreateTransactionCard } from '@/components/CreateTransactionCard'
 import { TransactionCard } from '@/components/TransactionCard'
+import { currencyFormat, groupBy } from '@/utils/utils'
 
 interface TransactionListProps {
   transactions: Transaction[]
@@ -30,25 +32,34 @@ const CustomTooltip = ({
   label,
 }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
-    const transaction = payload[0].payload as Transaction
+    const transactions = (payload[0].payload?.transactions ??
+      []) as Transaction[]
+    const MAX_RENDER_SIZE = 3
     return (
-      <div className="p-2 rounded-lg shadow bg-white bg-opacity-90 ring-0">
-        <p className="font-medium text-sm">
-          {dayjs(label).format('MMM DD, YYYY')}
+      <div className="p-2 min-w-[160px] space-y-2 rounded-lg shadow bg-white bg-opacity-95 ring-0">
+        <p className="font-medium text-sm text-gray-500">{label}</p>
+        <p className="font-semibold text-gray-900">
+          Total {currencyFormat(payload[0].payload.total)}
         </p>
-        <p>{transaction.name}</p>
-        <p
-          className={clsx(
-            'font-semibold',
-            transaction.income ? 'text-green-500' : 'text-red-500'
+        <ul className="space-y-1">
+          {transactions.slice(undefined, MAX_RENDER_SIZE).map((it) => (
+            <Fragment key={it.id}>
+              <p className="text-gray-900 font-semibold text-sm">{it.name}</p>
+              <p
+                className={clsx(
+                  'font-semibold',
+                  it.income ? 'text-green-500' : 'text-red-500'
+                )}
+              >
+                {it.income ? '+' : '-'}
+                {currencyFormat(it.amount)}
+              </p>
+            </Fragment>
+          ))}
+          {transactions.length > MAX_RENDER_SIZE && (
+            <MdMoreHoriz className="text-gray-600" />
           )}
-        >
-          {transaction.income ? '+' : '-'}
-          {Intl.NumberFormat('us', {
-            style: 'currency',
-            currency: 'VND',
-          }).format(payload[0].value!)}
-        </p>
+        </ul>
       </div>
     )
   }
@@ -86,7 +97,6 @@ export default function Dashboard() {
       toDate: dayjs().endOf('D').toDate(),
       order: 'desc',
       orderBy: 'amount',
-      income: false,
     })
   )
   const { pathname } = useLocation()
@@ -95,8 +105,10 @@ export default function Dashboard() {
     ['transactions', JSON.stringify(query)],
     () =>
       transactionsApi.getAll({
-        pageSize: query.pageSize!,
-        pageIndex: query.pageIndex!,
+        pageIndex: 1,
+        pageSize: Number.MAX_SAFE_INTEGER,
+        // fromDate: dayjs().subtract(7, 'D').toDate(),
+        // toDate: dayjs().endOf('D').toDate(),
         order: 'asc',
         orderBy: 'transactionDate',
       }),
@@ -110,6 +122,29 @@ export default function Dashboard() {
       pageSize: 20,
     }))
   }, [pathname])
+
+  const chartData = useMemo(() => {
+    type ReturnType = Array<{
+      transactionDate: string
+      transactions: Transaction[]
+      total: number
+    }>
+    const result: ReturnType = []
+    groupBy(
+      (transactionsQuery.data?.docs ?? []).map((it) => ({
+        ...it,
+        parsedTransactionDate: dayjs(it.transactionDate).format('DD/MM/YYYY'),
+      })),
+      (it) => it.parsedTransactionDate
+    ).forEach((transactions, transactionDate) => {
+      result.push({
+        total: transactions.reduce((res, curr) => (res += curr.amount), 0),
+        transactionDate,
+        transactions,
+      })
+    })
+    return result
+  }, [transactionsQuery.data])
 
   return (
     <div className="space-y-5">
@@ -126,7 +161,7 @@ export default function Dashboard() {
               left: 20,
               bottom: 20,
             }}
-            data={transactionsQuery.data?.docs}
+            data={chartData}
           >
             <defs>
               <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
@@ -141,19 +176,12 @@ export default function Dashboard() {
             />
             <XAxis
               dataKey="transactionDate"
-              tickFormatter={(value) => dayjs(value).format('DD/MM/YYYY')}
               style={{
                 fontSize: '12px',
               }}
             />
             <YAxis
-              tickFormatter={(value) =>
-                Intl.NumberFormat('us', {
-                  notation: 'compact',
-                  style: 'currency',
-                  currency: 'VND',
-                }).format(value)
-              }
+              tickFormatter={(value) => currencyFormat(value)}
               style={{
                 fontSize: '12px',
               }}
@@ -166,9 +194,9 @@ export default function Dashboard() {
                 fill: '#ffffff',
                 r: 5,
               }}
-              name="Amount"
+              name="Total"
               type="monotone"
-              dataKey="amount"
+              dataKey="total"
               fillOpacity={1}
               fill="url(#colorPv)"
               strokeWidth={2}
@@ -185,9 +213,9 @@ export default function Dashboard() {
         <p className="font-semibold">September 2022</p>
         <div className="flex-grow"></div>
         <span className="font-medium text-gray-400">
-          Number of transactions: {transactionsQuery.data?.totalDocs}
+          {/* Number of transactions: {transactionsQuery.data?.totalDocs} */}
         </span>
-        <span className="font-medium text-gray-400">
+        {/* <span className="font-medium text-gray-400">
           Value:{' '}
           {Intl.NumberFormat('us', {
             style: 'currency',
@@ -199,7 +227,7 @@ export default function Dashboard() {
               0
             ) ?? 0
           )}
-        </span>
+        </span> */}
       </div>
       <TransactionList transactions={topTransactionsQuery.data?.docs ?? []} />
     </div>
