@@ -14,9 +14,12 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { StringParam, useQueryParams } from 'use-query-params'
 
-import { transactionsApi } from '@/apis/transactions'
+import { transactionsApi, TransactionsQuery } from '@/apis/transactions'
 import { CreateTransactionCard } from '@/components/CreateTransactionCard'
+import { Option } from '@/components/Select/Select'
+import { SortGroup } from '@/components/SortGroup'
 import { TransactionCard } from '@/components/TransactionCard'
 import { currencyFormat, groupBy } from '@/utils/utils'
 
@@ -78,16 +81,20 @@ const TransactionList = memo(function TransactionList({
 })
 
 export default function Dashboard() {
-  const topTransactionsQuery = useQuery(['top-transactions'], () =>
-    transactionsApi.getAll({
-      pageIndex: 1,
-      pageSize: 5,
-      fromDate: dayjs().startOf('D').unix(),
-      toDate: dayjs().endOf('D').unix(),
-      order: 'desc',
-      orderBy: 'amount',
-    })
-  )
+  const [query] = useQueryParams({ orderBy: StringParam, order: StringParam })
+  const topTransactionsQuery = ((query: TransactionsQuery) =>
+    useQuery(
+      ['top-transactions', JSON.stringify(query)],
+      () =>
+        transactionsApi.getAll({
+          pageIndex: 1,
+          pageSize: 5,
+          fromDate: dayjs().subtract(18, 'days').startOf('D').unix(),
+          toDate: dayjs().endOf('D').unix(),
+          ...query,
+        }),
+      { staleTime: 30000 }
+    ))(query as TransactionsQuery)
 
   const transactionsQuery = useQuery(
     ['transactions'],
@@ -127,6 +134,21 @@ export default function Dashboard() {
     })
     return result
   }, [transactionsQuery.data])
+
+  const sortOpts: Option<keyof Transaction>[] = [
+    {
+      label: 'Name',
+      value: 'name',
+    },
+    {
+      label: 'Amount',
+      value: 'amount',
+    },
+    {
+      label: 'Transaction date',
+      value: 'transactionDate',
+    },
+  ]
 
   return (
     <div className="space-y-5">
@@ -192,15 +214,19 @@ export default function Dashboard() {
           <CreateTransactionCard />
         </div>
       </div>
-      <p className="font-bold text-xl">Top transactions</p>
+      <div className="flex items-center">
+        <p className="font-bold text-xl">Top transactions</p>
+        <div className="flex-grow"></div>
+        <SortGroup sorts={sortOpts} />
+      </div>
       <div className="flex items-center gap-3">
         <p className="font-semibold">September 2022</p>
         <div className="flex-grow"></div>
         <span className="font-medium text-gray-400">
-          {/* Number of transactions: {transactionsQuery.data?.totalDocs} */}
+          Number of transactions: {transactionsQuery.data?.totalDocs}
         </span>
         {/* <span className="font-medium text-gray-400">
-          Value:{' '}
+          Total:{' '}
           {Intl.NumberFormat('us', {
             style: 'currency',
             currency: 'VND',
@@ -213,7 +239,10 @@ export default function Dashboard() {
           )}
         </span> */}
       </div>
-      <TransactionList transactions={topTransactionsQuery.data?.docs ?? []} />
+      {topTransactionsQuery.isLoading && 'Loading...'}
+      {topTransactionsQuery.data && (
+        <TransactionList transactions={topTransactionsQuery.data.docs} />
+      )}
     </div>
   )
 }

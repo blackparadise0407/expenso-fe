@@ -74,7 +74,7 @@ export default forwardRef<HTMLInputElement, DatePickerProps>(
         />
         {open && (
           <div
-            className="absolute z-[1] top-[calc(100%+10px)] rounded-lg bg-white shadow p-3"
+            className="absolute z-10 top-[calc(100%+10px)] rounded-lg bg-white shadow p-3"
             ref={datePickerRef}
             style={style}
           >

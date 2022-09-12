@@ -5,6 +5,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { transactionsApi } from '@/apis/transactions'
 import { useToast } from '@/contexts/ToastContext'
 import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
+import { queryClient } from '@/queryClient'
 
 import { DatePicker } from '../DatePicker'
 import { Select } from '../Select'
@@ -20,7 +21,12 @@ export default function CreateTransactionCard() {
   const categoriesQuery = useCategoriesQuery(true)
   const { enqueue } = useToast()
   const transactionCreateMutation = useMutation<Transaction, string, Payload>(
-    (payload) => transactionsApi.create(payload)
+    (payload) => transactionsApi.create(payload),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['transactions'])
+      },
+    }
   )
 
   const {

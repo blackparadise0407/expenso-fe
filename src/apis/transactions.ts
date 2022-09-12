@@ -8,20 +8,20 @@ type CreateTransactionDTO = Pick<
   'amount' | 'category' | 'income' | 'name' | 'transactionDate'
 >
 
-interface TransactionsQuery {
+export interface TransactionsQuery {
   income?: boolean
   fromDate?: number
   toDate?: number
-  order?: 'asc' | 'desc'
+  order?: string
   orderBy?: keyof Transaction
   min?: number
   max?: number
   categoryId?: string
 }
 
-type PaginatedTransactionQuery = PaginatedQuery & TransactionsQuery
+export type PaginatedTransactionQuery = PaginatedQuery & TransactionsQuery
 
-interface TransactionAnalyticResponse {
+export interface TransactionAnalyticResponse {
   transactions: Array<
     Pick<Transaction, 'name' | 'transactionDate' | 'amount' | 'income'>
   >

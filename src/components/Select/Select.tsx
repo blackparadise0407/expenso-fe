@@ -12,9 +12,13 @@ import { MdKeyboardArrowDown } from 'react-icons/md'
 
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
 
-export interface Option {
-  value: string | number | readonly string[] | undefined
+export interface Option<T = string> {
+  value: T | undefined
   label: string
+}
+
+export interface SelectChangeFn {
+  (value?: string | number): void
 }
 
 interface SelectProps {
@@ -22,9 +26,10 @@ interface SelectProps {
   defaultOpen?: boolean
   placeholder?: string
   enableSearch?: boolean
-  value?: string | number | readonly string[]
+  value?: string | number
   emptyContent?: ReactNode
-  onChange?: (value?: string | number | readonly string[]) => void
+  wrapperCls?: string
+  onChange?: SelectChangeFn
 }
 
 export default forwardRef<HTMLDivElement, SelectProps>(function Select(
@@ -35,6 +40,7 @@ export default forwardRef<HTMLDivElement, SelectProps>(function Select(
     placeholder,
     enableSearch = true,
     emptyContent,
+    wrapperCls,
     onChange = () => {},
   }: SelectProps,
   ref
@@ -75,10 +81,10 @@ export default forwardRef<HTMLDivElement, SelectProps>(function Select(
   }, [open])
 
   return (
-    <div className="w-full relative" ref={divRef}>
+    <div className={clsx('w-full relative', wrapperCls)} ref={divRef}>
       <div
         className={clsx(
-          'z-[1] relative h-[40px] flex items-center py-2 pl-3 pr-5 font-medium text-gray-900 rounded-lg bg-gray-100 outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer',
+          'z-[5] relative h-[40px] flex items-center py-2 pl-3 pr-5 font-medium text-gray-900 rounded-lg bg-gray-100 outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer',
           open && 'outline-none ring-2 ring-blue-200'
         )}
         onClick={() => {
@@ -114,7 +120,7 @@ export default forwardRef<HTMLDivElement, SelectProps>(function Select(
               <li
                 key={idx}
                 className={clsx(
-                  'px-2 py-1.5 font-semibold text-gray-600 text-sm hover:bg-gray-100 hover:text-gray-900 transition-colors cursor-pointer',
+                  'px-2 py-1.5 font-semibold text-gray-600 text-sm hover:bg-gray-100 hover:text-gray-900 transition-colors cursor-pointer truncate',
                   selectedOptionsIdx === idx &&
                     'bg-blue-500 text-white hover:bg-blue-400 hover:text-white'
                 )}
