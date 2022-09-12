@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 import { transactionsApi } from '@/apis/transactions'
@@ -33,7 +34,12 @@ export default function CreateTransactionCard() {
   const onSubmit: SubmitHandler<Payload> = async (data) => {
     try {
       const amount = parseInt(data.amount.toString().split(',').join(''))
-      await transactionCreateMutation.mutateAsync({ ...data, amount })
+      const transactionDate = dayjs(data.transactionDate).unix()
+      await transactionCreateMutation.mutateAsync({
+        ...data,
+        amount,
+        transactionDate,
+      })
       enqueue('Create transaction success')
       reset()
     } catch (e) {

@@ -18,7 +18,7 @@ import 'react-day-picker/dist/style.css'
 
 interface DatePickerProps {
   fullWidth?: boolean
-  value?: Date
+  value?: Date | number
   onChange?: (date?: Date) => void
 }
 
@@ -51,6 +51,10 @@ export default forwardRef<HTMLInputElement, DatePickerProps>(
       }
     }
 
+    const parsedValue = dayjs(
+      typeof value === 'number' ? value * 1000 : value
+    ).format('DD/MM/YYYY')
+
     return (
       <div
         ref={divRef}
@@ -62,7 +66,7 @@ export default forwardRef<HTMLInputElement, DatePickerProps>(
           icon={<MdCalendarToday />}
           className={clsx(value ? 'text-gray-900' : 'text-gray-400')}
           inputProps={{
-            defaultValue: value ? dayjs(value).format('DD/MM/YYYY') : undefined,
+            defaultValue: value ? parsedValue : undefined,
             readOnly: true,
             placeholder: 'dd/mm/yyyy',
             onClick: () => setOpen(true),
@@ -77,7 +81,7 @@ export default forwardRef<HTMLInputElement, DatePickerProps>(
             <DayPicker
               className="m-2"
               mode="single"
-              selected={value}
+              selected={typeof value === 'number' ? new Date(value) : value}
               onSelect={handleSelect}
             />
           </div>

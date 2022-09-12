@@ -10,8 +10,8 @@ type CreateTransactionDTO = Pick<
 
 interface TransactionsQuery {
   income?: boolean
-  fromDate?: Date
-  toDate?: Date
+  fromDate?: number
+  toDate?: number
   order?: 'asc' | 'desc'
   orderBy?: keyof Transaction
   min?: number

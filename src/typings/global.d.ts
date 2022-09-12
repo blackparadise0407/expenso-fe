@@ -4,7 +4,7 @@ declare global {
   interface Transaction {
     id: string
     name: string
-    transactionDate: Date
+    transactionDate: number
     amount: number
     createdById: string
     income: boolean

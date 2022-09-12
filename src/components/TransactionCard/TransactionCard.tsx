@@ -19,7 +19,7 @@ export default function TransactionCard({ data }: TransactionCardProps) {
       <div>
         <p className="font-bold text-gray-800">{data.name}</p>
         <p className="text-sm font-medium text-gray-400">
-          {dayjs(data.transactionDate).format('DD MMMM YYYY')}
+          {dayjs(data.transactionDate * 1000).format('DD MMMM YYYY')}
         </p>
       </div>
       <div className="flex-grow"></div>

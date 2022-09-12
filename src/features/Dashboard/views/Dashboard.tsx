@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { Fragment, memo, useEffect, useMemo } from 'react'
+import { Fragment, memo, useMemo } from 'react'
 import { MdMoreHoriz } from 'react-icons/md'
-import { useLocation } from 'react-router-dom'
 import {
   Area,
   AreaChart,
@@ -15,7 +14,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { NumberParam, useQueryParams } from 'use-query-params'
 
 import { transactionsApi } from '@/apis/transactions'
 import { CreateTransactionCard } from '@/components/CreateTransactionCard'
@@ -80,29 +78,19 @@ const TransactionList = memo(function TransactionList({
 })
 
 export default function Dashboard() {
-  const [query, setQuery] = useQueryParams(
-    {
-      pageSize: NumberParam,
-      pageIndex: NumberParam,
-    },
-    {
-      params: {},
-    }
-  )
   const topTransactionsQuery = useQuery(['top-transactions'], () =>
     transactionsApi.getAll({
       pageIndex: 1,
       pageSize: 5,
-      fromDate: dayjs().startOf('D').toDate(),
-      toDate: dayjs().endOf('D').toDate(),
+      fromDate: dayjs().startOf('D').unix(),
+      toDate: dayjs().endOf('D').unix(),
       order: 'desc',
       orderBy: 'amount',
     })
   )
-  const { pathname } = useLocation()
 
   const transactionsQuery = useQuery(
-    ['transactions', JSON.stringify(query)],
+    ['transactions'],
     () =>
       transactionsApi.getAll({
         pageIndex: 1,
@@ -115,14 +103,6 @@ export default function Dashboard() {
     { keepPreviousData: true }
   )
 
-  useEffect(() => {
-    setQuery((query) => ({
-      ...query,
-      pageIndex: 1,
-      pageSize: 20,
-    }))
-  }, [pathname])
-
   const chartData = useMemo(() => {
     type ReturnType = Array<{
       transactionDate: string
@@ -133,7 +113,9 @@ export default function Dashboard() {
     groupBy(
       (transactionsQuery.data?.docs ?? []).map((it) => ({
         ...it,
-        parsedTransactionDate: dayjs(it.transactionDate).format('DD/MM/YYYY'),
+        parsedTransactionDate: dayjs(it.transactionDate * 1000).format(
+          'DD/MM/YYYY'
+        ),
       })),
       (it) => it.parsedTransactionDate
     ).forEach((transactions, transactionDate) => {
@@ -149,61 +131,63 @@ export default function Dashboard() {
   return (
     <div className="space-y-5">
       <div className="mt-5 flex gap-5 flex-wrap lg:flex-nowrap">
-        <ResponsiveContainer
-          className="bg-white rounded-lg shadow lg:order-1 order-2"
-          width="100%"
-          height={400}
-        >
-          <AreaChart
-            margin={{
-              top: 50,
-              right: 50,
-              left: 20,
-              bottom: 20,
-            }}
-            data={chartData}
+        {chartData.length && (
+          <ResponsiveContainer
+            className="bg-white rounded-lg shadow lg:order-1 order-2"
+            width="100%"
+            height={400}
           >
-            <defs>
-              <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3A78F2" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="#3A78F2" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid horizontal={false} strokeDasharray="3" />
-            <Tooltip
-              wrapperStyle={{ outline: 'none' }}
-              content={<CustomTooltip />}
-            />
-            <XAxis
-              dataKey="transactionDate"
-              style={{
-                fontSize: '12px',
+            <AreaChart
+              margin={{
+                top: 50,
+                right: 50,
+                left: 20,
+                bottom: 20,
               }}
-            />
-            <YAxis
-              tickFormatter={(value) => currencyFormat(value)}
-              style={{
-                fontSize: '12px',
-              }}
-            />
-            <Legend align="center" />
-            <Area
-              dot={{
-                stroke: '#3A78F2',
-                strokeWidth: 2,
-                fill: '#ffffff',
-                r: 5,
-              }}
-              name="Total"
-              type="monotone"
-              dataKey="total"
-              fillOpacity={1}
-              fill="url(#colorPv)"
-              strokeWidth={2}
-              stroke="#3A78F2"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+              data={chartData}
+            >
+              <defs>
+                <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3A78F2" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#3A78F2" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid horizontal={false} strokeDasharray="3" />
+              <Tooltip
+                wrapperStyle={{ outline: 'none' }}
+                content={<CustomTooltip />}
+              />
+              <XAxis
+                dataKey="transactionDate"
+                style={{
+                  fontSize: '12px',
+                }}
+              />
+              <YAxis
+                tickFormatter={(value) => currencyFormat(value)}
+                style={{
+                  fontSize: '12px',
+                }}
+              />
+              <Legend align="center" />
+              <Area
+                dot={{
+                  stroke: '#3A78F2',
+                  strokeWidth: 2,
+                  fill: '#ffffff',
+                  r: 5,
+                }}
+                name="Total"
+                type="monotone"
+                dataKey="total"
+                fillOpacity={1}
+                fill="url(#colorPv)"
+                strokeWidth={2}
+                stroke="#3A78F2"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
         <div className="min-w-full lg:min-w-[35%] max-w-[500px] lg:max-w-full order-1 lg:order-2">
           <CreateTransactionCard />
         </div>
