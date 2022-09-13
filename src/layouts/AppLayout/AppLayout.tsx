@@ -1,8 +1,9 @@
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import { attachAccessToken } from '@/apis/httpClient'
+import { Loader } from '@/components/Loader'
 import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
 
 import Navigation from './Navigation'
@@ -28,9 +29,11 @@ export default withAuthenticationRequired(
     return (
       <div className="flex h-screen">
         <Sidebar />
-        <main className="flex-1 px-10 py-10 overflow-y-auto overflow-x-hidden">
+        <main className="flex-1 px-10 py-10 space-y-5 overflow-y-auto overflow-x-hidden">
           <Navigation />
-          <Outlet />
+          <Suspense fallback={<Loader />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     )

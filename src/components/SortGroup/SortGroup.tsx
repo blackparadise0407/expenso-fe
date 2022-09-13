@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { useEffect } from 'react'
-import { CgArrowUp } from 'react-icons/cg'
+import { BsSortDown, BsSortUp } from 'react-icons/bs'
 import { StringParam, useQueryParams } from 'use-query-params'
 
 import { Select } from '../Select'
@@ -65,18 +65,16 @@ export default function SortGroup({
         value={query.orderBy ?? undefined}
         onChange={handleSelectSortOptions}
       />
-      <CgArrowUp
+      <span
         className={clsx(
-          'transition-shadow text-xl cursor-pointer select-none',
+          'text-xl transition-colors cursor-pointer select-none',
           !query.orderBy && 'pointer-events-none',
-          query.order
-            ? query.order === 'asc'
-              ? 'text-blue-500'
-              : 'text-blue-500 rotate-180'
-            : 'text-gray-500'
+          query.order ? 'text-blue-500 hover:text-blue-400' : 'text-gray-500'
         )}
         onClick={handleChangeSortDir}
-      />
+      >
+        {query.order === 'asc' ? <BsSortUp /> : <BsSortDown />}
+      </span>
     </div>
   )
 }

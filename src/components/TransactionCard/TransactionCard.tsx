@@ -4,6 +4,8 @@ import { MdClose } from 'react-icons/md'
 
 import { currencyFormat } from '@/utils/utils'
 
+import { IconButton } from '../IconButton'
+
 interface TransactionCardProps {
   data: Transaction
 }
@@ -32,9 +34,7 @@ export default function TransactionCard({ data }: TransactionCardProps) {
         {data.income ? '+' : '-'} {currencyFormat(data.amount)}
       </p>
       <div className="flex gap-2">
-        <div className="p-2 bg-blue-50 rounded-lg cursor-pointer">
-          <MdClose className="text-gray-600" />
-        </div>
+        <IconButton icon={<MdClose className="text-gray-600" />} />
       </div>
     </div>
   )
