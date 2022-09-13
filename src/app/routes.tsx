@@ -2,10 +2,10 @@ import { lazy } from 'react'
 import { RouteObject } from 'react-router-dom'
 
 import { ROUTES } from '@/constants'
-import Dashboard from '@/features/Dashboard/views/Dashboard'
 import { AppLayout } from '@/layouts/AppLayout'
 
-const Logout = lazy(() => import('@/features/Auth/views/Logout'))
+const Dashboard = lazy(() => import('@/features/dashboard/views/Dashboard'))
+const Logout = lazy(() => import('@/features/auth/views/Logout'))
 
 export const appRoutes: RouteObject[] = [
   {
