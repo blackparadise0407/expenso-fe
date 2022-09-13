@@ -7,6 +7,12 @@ export const env = {
   api: {
     baseUrl: import.meta.env.VITE_APP_API_BASE_URL,
   },
+  supabase: {
+    url:
+      import.meta.env.VITE_APP_SUPABASE_URL ||
+      'https://uilucokcacwkdwwozvuf.supabase.co',
+    apiKey: import.meta.env.VITE_APP_SUPABASE_API_KEY,
+  },
 }
 
 export const ROUTES = {

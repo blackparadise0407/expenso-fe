@@ -1,17 +1,25 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { MdOutlineAdd } from 'react-icons/md'
 
 import { Button } from '@/components/Button'
-import { Modal } from '@/components/Modal'
-import { TextArea } from '@/components/TextArea'
-import { TextField } from '@/components/TextField'
 import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
 
 import CategoryCardList from '../components/CategoryCardList/CategoryCardList'
+import CategoryModal from '../components/CategoryModal/CategoryModal'
 
 export default function CategoryList() {
   const [createCatModalOpen, setCreateCatModalOpen] = useState(false)
+  const [selectedCategoryId, setSelectedCategoryId] = useState('')
   const categoriesQuery = useCategoriesQuery(true)
+
+  const handleSelectCatIdForEdit = useCallback((id: string) => {
+    setSelectedCategoryId(id)
+  }, [])
+
+  const handleCloseModal = () => {
+    setCreateCatModalOpen(false)
+    setSelectedCategoryId('')
+  }
 
   return (
     <div className="space-y-5">
@@ -24,28 +32,19 @@ export default function CategoryList() {
         </Button>
       </div>
       {categoriesQuery.data && (
-        <CategoryCardList categories={categoriesQuery.data} />
+        <CategoryCardList
+          categories={categoriesQuery.data}
+          onEdit={handleSelectCatIdForEdit}
+        />
       )}
-      <Modal
-        title="Create new category"
-        open={createCatModalOpen}
-        onClose={() => setCreateCatModalOpen(false)}
-      >
-        <div className="grid grid-cols-2 gap-3">
-          <div className="form-group col-span-1">
-            <label htmlFor="name">Name</label>
-            <TextField />
-          </div>
-          <div className="form-group col-span-1">
-            <label htmlFor="imgUrl">Image url</label>
-            <TextField />
-          </div>
-          <div className="form-group col-span-2">
-            <label htmlFor="description">Description</label>
-            <TextArea className="max-h-[100px]" />
-          </div>
-        </div>
-      </Modal>
+
+      <CategoryModal
+        open={createCatModalOpen || !!selectedCategoryId}
+        category={categoriesQuery.data?.find(
+          (it) => it.id === selectedCategoryId
+        )}
+        onClose={handleCloseModal}
+      />
     </div>
   )
 }

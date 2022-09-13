@@ -1,3 +1,4 @@
+/* eslint-disable react/no-children-prop */
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MdClose } from 'react-icons/md'
@@ -6,9 +7,9 @@ import { Backdrop } from '../Backdrop'
 import { Button } from '../Button'
 import { ButtonProps } from '../Button/Button'
 
-interface ModalProps {
+export interface ModalProps {
   open: boolean
-  title?: string
+  title?: React.ReactNode
   children?: React.ReactNode
   className?: string
   footer?: React.ReactNode
@@ -23,10 +24,8 @@ export default function Modal({
   title = 'Test title',
   open,
   children,
-  okBtnProps = { variant: 'primary' },
-  cancelBtnProps = {
-    variant: 'text',
-  },
+  okBtnProps,
+  cancelBtnProps,
   onClose,
 }: ModalProps) {
   return (
@@ -43,7 +42,11 @@ export default function Modal({
             )}
           >
             <div className="flex px-3 pt-3 pb-2">
-              <h5 className="font-semibold">{title}</h5>{' '}
+              {typeof title === 'string' ? (
+                <h4 className="font-semibold">{title}</h4>
+              ) : (
+                title
+              )}
               {onClose && (
                 <MdClose
                   className="absolute top-3 right-3 text-xl cursor-pointer"
@@ -65,8 +68,12 @@ export default function Modal({
               ) : (
                 <>
                   <div className="flex-grow"></div>
-                  <Button {...cancelBtnProps}>Close</Button>
-                  <Button {...okBtnProps}>Confirm</Button>
+                  <Button
+                    variant="text"
+                    children={'Cancel'}
+                    {...cancelBtnProps}
+                  />
+                  <Button variant="primary" children={'Ok'} {...okBtnProps} />
                 </>
               )}
             </div>
