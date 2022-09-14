@@ -1,3 +1,4 @@
+import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
@@ -8,6 +9,7 @@ import { ModalProps } from '@/components/Modal/Modal'
 import { TextArea } from '@/components/TextArea'
 import { TextField } from '@/components/TextField'
 import { useToast } from '@/contexts/ToastContext'
+import { queryClient } from '@/queryClient'
 import { supabase } from '@/utils/supabase'
 import { getSupabasePublicUrl } from '@/utils/utils'
 
@@ -37,13 +39,13 @@ export default function CategoryModal({
   const onSubmit: SubmitHandler<Payload> = async (data) => {
     setLoading(true)
     const img = data.image[0]
-    const fileName =
-      img.name.substring(0, img.name.lastIndexOf('.')) +
-      '-' +
-      Date.now().toString()
     try {
       let imgUrl = ''
       if (img) {
+        const fileName =
+          img.name.substring(0, img.name.lastIndexOf('.')) +
+          '-' +
+          Date.now().toString()
         const resp = await supabase.storage
           .from('expenso.dev')
           .upload('public/' + fileName + '.jpg', data.image[0], {
@@ -54,25 +56,43 @@ export default function CategoryModal({
           imgUrl = getSupabasePublicUrl(resp.data.Key)
         }
       }
+      let newCategory: Category | undefined = undefined
       if (!category) {
-        categoriesApi.create({
+        newCategory = await categoriesApi.create({
           name: data.name,
           description: data.description,
           imgUrl,
         })
+        enqueue('Create category success')
       } else {
-        categoriesApi.update({
+        newCategory = await categoriesApi.update({
           id: category.id,
           name: data.name,
           description: data.description,
           imgUrl: imgUrl || category.imgUrl,
         })
+        enqueue('Update category success')
       }
-      enqueue('Create category success')
+      if (newCategory) {
+        const cate = newCategory!
+        queryClient.setQueryData<Category[]>(['categories'], (input) => {
+          if (input) {
+            return produce(input, (draft) => {
+              const foundIdx = draft.findIndex((it) => it.id === cate.id)
+              if (foundIdx > -1) {
+                draft[foundIdx] = cate
+              } else {
+                draft.push(cate)
+              }
+            })
+          }
+        })
+      }
       onClose?.()
     } catch (e) {
       enqueue(typeof e === 'string' ? e : '')
     } finally {
+      reset()
       setLoading(false)
     }
   }
@@ -110,7 +130,18 @@ export default function CategoryModal({
           <TextField
             fullWidth
             inputProps={{
-              ...register('name', { required: 'Name cannot be empty' }),
+              placeholder: 'Enter category name',
+              ...register('name', {
+                required: 'Name cannot be empty',
+                minLength: {
+                  value: 3,
+                  message: 'Minimum length is 3 characters',
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'Maximum length is 100 characters',
+                },
+              }),
             }}
           />
           {errors.name && <p className="form-error">{errors.name.message}</p>}
@@ -130,8 +161,8 @@ export default function CategoryModal({
           <TextArea
             className="max-h-[100px]"
             maxLength={200}
+            placeholder="Enter category small description"
             {...register('description', {
-              required: 'Description cannot be empty',
               minLength: {
                 value: 10,
                 message: 'Minimum length is 10 characters',

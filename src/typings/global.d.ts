@@ -8,7 +8,7 @@ declare global {
     amount: number
     createdById: string
     income: boolean
-    category: string
+    category: Category | string
     createdAt: Date
     updatedAt: Date
     parsedTransactionDate?: string

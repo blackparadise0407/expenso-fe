@@ -153,7 +153,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-5">
       <div className="flex gap-5 flex-wrap lg:flex-nowrap">
-        {chartData.length && (
+        {!!chartData.length && (
           <ResponsiveContainer
             className="bg-white rounded-lg shadow lg:order-1 order-2"
             width="100%"

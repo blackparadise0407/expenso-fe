@@ -66,7 +66,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
       }}
     >
       {children}
-      <div className="fixed top-3 right-3 space-y-3 z-[1000]">
+      <div className="fixed top-5 right-5 space-y-3 z-[1000]">
         <AnimatePresence initial={false}>
           {toasts.map((it) => (
             <Toast key={it.id} data={it} onRemove={remove} />

@@ -8,11 +8,18 @@ export type CreateCategoryDTO = Pick<
 >
 
 export type UpdateCategoryDTO = Partial<Category>
+export interface DeleteCategoryDTO extends Pick<Category, 'id'> {
+  forcedDelete?: boolean
+}
 
 export const categoriesApi = {
   get: () => httpClient<Category[]>('get', ENDPOINT),
   create: (payload: CreateCategoryDTO) =>
     httpClient<Category>('post', ENDPOINT, payload),
   update: (payload: UpdateCategoryDTO) =>
-    httpClient('patch', ENDPOINT + '/' + payload.id!, payload),
+    httpClient<Category>('patch', ENDPOINT + '/' + payload.id!, payload),
+  delete: (payload: DeleteCategoryDTO) =>
+    httpClient<{ message: string }>('delete', ENDPOINT + '/' + payload.id, {
+      forcedDelete: payload.forcedDelete,
+    }),
 }

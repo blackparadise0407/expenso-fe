@@ -1,7 +1,12 @@
 import dayjs from 'dayjs'
+import { produce } from 'immer'
+import { useState } from 'react'
 import { MdDeleteOutline, MdOutlineEdit } from 'react-icons/md'
 
+import { categoriesApi } from '@/apis/categories'
 import { IconButton } from '@/components/IconButton'
+import { useToast } from '@/contexts/ToastContext'
+import { queryClient } from '@/queryClient'
 
 interface CategoryCardProps {
   category: Category
@@ -9,6 +14,31 @@ interface CategoryCardProps {
 }
 
 export default function CategoryCard({ category, onEdit }: CategoryCardProps) {
+  const { enqueue } = useToast()
+  const [deleting, setDeleting] = useState(false)
+
+  const handleDeleteCategory = async (id: string) => {
+    setDeleting(true)
+    try {
+      const { message } = await categoriesApi.delete({ id })
+      queryClient.setQueryData<Category[]>(['categories'], (input) => {
+        if (input) {
+          return produce(input, (draft) => {
+            const foundIdx = draft.findIndex((it) => it.id === id)
+            if (foundIdx > -1) {
+              draft.splice(foundIdx, 1)
+            }
+          })
+        }
+      })
+      enqueue(message)
+    } catch (e) {
+      enqueue(e as string, { variant: 'error' })
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   return (
     <div className="flex gap-5 items-center p-3 rounded-lg shadow">
       <img
@@ -34,7 +64,11 @@ export default function CategoryCard({ category, onEdit }: CategoryCardProps) {
           icon={<MdOutlineEdit className="text-blue-500" />}
           onClick={() => onEdit?.(category.id)}
         />
-        <IconButton icon={<MdDeleteOutline className="text-red-500" />} />
+        <IconButton
+          icon={<MdDeleteOutline className="text-red-500" />}
+          loading={deleting}
+          onClick={() => handleDeleteCategory(category.id)}
+        />
       </div>
     </div>
   )

@@ -15,7 +15,9 @@ export default function TransactionCard({ data }: TransactionCardProps) {
     <div className="flex items-center gap-5 p-5 rounded-lg shadow">
       <img
         className="w-8 h-8 rounded-lg"
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNGSBhG8SG1FWHrm9Shv4KX3oIrXhIsp9dUA&usqp=CAU"
+        src={
+          typeof data.category === 'object' ? data.category?.imgUrl : undefined
+        }
         alt=""
       />
       <div>
