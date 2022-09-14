@@ -2,9 +2,18 @@ import clsx from 'clsx'
 
 import classes from './Loader.module.css'
 
-export default function Loader() {
+interface LoaderProps {
+  className?: string
+}
+
+export default function Loader({ className }: LoaderProps) {
   return (
-    <div className="w-full h-full grid place-content-center justify-center">
+    <div
+      className={clsx(
+        'w-full h-full grid place-content-center justify-center',
+        className
+      )}
+    >
       <div className={clsx(classes.lds_facebook, 'mx-auto animate-pulse')}>
         <div></div>
         <div></div>

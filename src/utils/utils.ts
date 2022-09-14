@@ -36,3 +36,11 @@ export function fileReaderAsync(file: File | Blob) {
 
 export const getSupabasePublicUrl = (key: string) =>
   `${env.supabase.url}/storage/v1/object/public/${key}`
+
+export const extractFileName = (fileName?: string) =>
+  fileName
+    ? [
+        fileName.substring(0, fileName.lastIndexOf('.')),
+        fileName.substring(fileName.lastIndexOf('.'), fileName.length),
+      ]
+    : ['', '']

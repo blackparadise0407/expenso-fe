@@ -12,6 +12,7 @@ export const env = {
       import.meta.env.VITE_APP_SUPABASE_URL ||
       'https://uilucokcacwkdwwozvuf.supabase.co',
     apiKey: import.meta.env.VITE_APP_SUPABASE_API_KEY,
+    bucket: import.meta.env.DEV ? 'expenso.dev' : 'expenso.prod',
   },
 }
 

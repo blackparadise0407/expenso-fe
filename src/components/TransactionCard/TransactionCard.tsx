@@ -26,6 +26,11 @@ export default function TransactionCard({ data }: TransactionCardProps) {
           {dayjs(data.transactionDate * 1000).format('DD MMMM YYYY')}
         </p>
       </div>
+      {!!data.description && (
+        <p className="max-w-[800px] truncate text-gray-400">
+          {data.description}
+        </p>
+      )}
       <div className="flex-grow"></div>
       <p
         className={clsx(

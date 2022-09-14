@@ -45,7 +45,7 @@ export default function Button({
       {loading ? (
         <AiOutlineLoading3Quarters className="text-base animate-spin mr-1" />
       ) : (
-        icon && <span className="text-xl">{icon}</span>
+        icon && <span className="text-lg">{icon}</span>
       )}
 
       {children}

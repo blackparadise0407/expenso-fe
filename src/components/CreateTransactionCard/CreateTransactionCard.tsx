@@ -10,12 +10,16 @@ import { queryClient } from '@/queryClient'
 import { DatePicker } from '../DatePicker'
 import { Select } from '../Select'
 import { Switch } from '../Switch'
+import { TextArea } from '../TextArea'
 import { TextField } from '../TextField'
 
-type Payload = Pick<
-  Transaction,
-  'amount' | 'name' | 'income' | 'category' | 'transactionDate'
->
+interface Payload
+  extends Pick<
+    Transaction,
+    'amount' | 'name' | 'income' | 'transactionDate' | 'description'
+  > {
+  category: string
+}
 
 export default function CreateTransactionCard() {
   const categoriesQuery = useCategoriesQuery(true)
@@ -141,11 +145,23 @@ export default function CreateTransactionCard() {
           <p className="form-error">{errors.transactionDate.message}</p>
         )}
       </div>
+      <div className="form-group col-span-2">
+        <label htmlFor="description">Description</label>
+        <TextArea
+          className="max-h-[60px]"
+          placeholder="Enter description"
+          maxLength={100}
+          {...register('description')}
+        />
+        {errors.description && (
+          <p className="form-error">{errors.description.message}</p>
+        )}
+      </div>
       <div className="col-span-1 form-group">
         <label htmlFor="income">Income</label>
         <Switch {...register('income')} />
       </div>
-      <button type="submit" className="mt-5 col-span-2 btn btn--primary">
+      <button type="submit" className="col-span-2 btn btn--primary">
         Add transaction
       </button>
     </form>

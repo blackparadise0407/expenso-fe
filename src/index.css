@@ -41,6 +41,10 @@
     @apply flex flex-col items-start gap-1;
   }
 
+  .form-group > label:first-child {
+    @apply w-full truncate;
+  }
+
   .form-error {
     @apply text-sm font-medium text-red-500;
   }

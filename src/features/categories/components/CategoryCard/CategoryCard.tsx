@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { produce } from 'immer'
 import { useState } from 'react'
-import { MdDeleteOutline, MdOutlineEdit } from 'react-icons/md'
+import { FiEdit, FiTrash } from 'react-icons/fi'
 
 import { categoriesApi } from '@/apis/categories'
 import { IconButton } from '@/components/IconButton'
@@ -61,11 +61,11 @@ export default function CategoryCard({ category, onEdit }: CategoryCardProps) {
       <div className="flex-grow"></div>
       <div className="flex gap-2">
         <IconButton
-          icon={<MdOutlineEdit className="text-blue-500" />}
+          icon={<FiEdit className="text-blue-500" />}
           onClick={() => onEdit?.(category.id)}
         />
         <IconButton
-          icon={<MdDeleteOutline className="text-red-500" />}
+          icon={<FiTrash className="text-red-500" />}
           loading={deleting}
           onClick={() => handleDeleteCategory(category.id)}
         />

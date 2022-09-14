@@ -1,6 +1,7 @@
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { FiPlus, FiSave } from 'react-icons/fi'
 
 import { categoriesApi } from '@/apis/categories'
 import { FileUploadInput } from '@/components/FileUploadInput'
@@ -8,10 +9,11 @@ import { Modal } from '@/components/Modal'
 import { ModalProps } from '@/components/Modal/Modal'
 import { TextArea } from '@/components/TextArea'
 import { TextField } from '@/components/TextField'
+import { env } from '@/constants'
 import { useToast } from '@/contexts/ToastContext'
 import { queryClient } from '@/queryClient'
 import { supabase } from '@/utils/supabase'
-import { getSupabasePublicUrl } from '@/utils/utils'
+import { extractFileName, getSupabasePublicUrl } from '@/utils/utils'
 
 interface CategoryModalProps extends Pick<ModalProps, 'open' | 'onClose'> {
   category?: Category
@@ -42,13 +44,10 @@ export default function CategoryModal({
     try {
       let imgUrl = ''
       if (img) {
-        const fileName =
-          img.name.substring(0, img.name.lastIndexOf('.')) +
-          '-' +
-          Date.now().toString()
+        const [fileName, fileExt] = extractFileName(img.name)
         const resp = await supabase.storage
-          .from('expenso.dev')
-          .upload('public/' + fileName + '.jpg', data.image[0], {
+          .from(env.supabase.bucket)
+          .upload(`public/${fileName}-${Date.now()}${fileExt}`, img, {
             cacheControl: '3600',
             upsert: false,
           })
@@ -120,6 +119,7 @@ export default function CategoryModal({
       okBtnProps={{
         type: 'submit',
         children: category ? 'Save' : 'Create',
+        icon: category ? <FiSave /> : <FiPlus />,
         loading,
         onClick: handleSubmit(onSubmit),
       }}

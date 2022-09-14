@@ -18,6 +18,7 @@ import { StringParam, useQueryParams } from 'use-query-params'
 
 import { transactionsApi, TransactionsQuery } from '@/apis/transactions'
 import { CreateTransactionCard } from '@/components/CreateTransactionCard'
+import { Loader } from '@/components/Loader'
 import { Option } from '@/components/Select/Select'
 import { SortGroup } from '@/components/SortGroup'
 import { TransactionCard } from '@/components/TransactionCard'
@@ -153,11 +154,12 @@ export default function Dashboard() {
   return (
     <div className="space-y-5">
       <div className="flex gap-5 flex-wrap lg:flex-nowrap">
+        {transactionsQuery.isLoading && <Loader className="h-[500px]" />}
         {!!chartData.length && (
           <ResponsiveContainer
             className="bg-white rounded-lg shadow lg:order-1 order-2"
             width="100%"
-            height={400}
+            height={500}
           >
             <AreaChart
               margin={{
@@ -239,7 +241,7 @@ export default function Dashboard() {
           )}
         </span> */}
       </div>
-      {topTransactionsQuery.isLoading && 'Loading...'}
+      {topTransactionsQuery.isLoading && <Loader />}
       {topTransactionsQuery.data && (
         <TransactionList transactions={topTransactionsQuery.data.docs} />
       )}

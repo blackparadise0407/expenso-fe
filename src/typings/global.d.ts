@@ -7,6 +7,7 @@ declare global {
     transactionDate: number
     amount: number
     createdById: string
+    description: string
     income: boolean
     category: Category | string
     createdAt: Date
