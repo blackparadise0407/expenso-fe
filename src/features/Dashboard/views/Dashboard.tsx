@@ -1,14 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { produce } from 'immer'
-import { Fragment, memo, useMemo, useState } from 'react'
+import { Fragment, memo, useMemo } from 'react'
 import { MdMoreHoriz } from 'react-icons/md'
 import {
+  Area,
+  AreaChart,
   CartesianGrid,
   Legend,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   TooltipProps,
@@ -92,11 +91,11 @@ const CHART_KEY = {
 
 export default function Dashboard() {
   const [query] = useQueryParams({ orderBy: StringParam, order: StringParam })
-  const [chartState, setChartState] = useState<Record<string, boolean>>({
-    [CHART_KEY.TOTAL]: true,
-    [CHART_KEY.INCOME]: true,
-    [CHART_KEY.OUTCOME]: true,
-  })
+  // const [chartState, setChartState] = useState<Record<string, boolean>>({
+  //   [CHART_KEY.TOTAL]: true,
+  //   [CHART_KEY.INCOME]: true,
+  //   [CHART_KEY.OUTCOME]: true,
+  // })
   const topTransactionsQuery = ((query: TransactionsQuery) =>
     useQuery(
       ['top-transactions', JSON.stringify(query)],
@@ -155,7 +154,7 @@ export default function Dashboard() {
             width="100%"
             height={500}
           >
-            <LineChart
+            <AreaChart
               margin={{
                 top: 50,
                 right: 50,
@@ -169,14 +168,14 @@ export default function Dashboard() {
                   <stop offset="5%" stopColor="#3A78F2" stopOpacity={0.4} />
                   <stop offset="95%" stopColor="#3A78F2" stopOpacity={0} />
                 </linearGradient>
-                <linearGradient id="colorOutcome" x1="0" y1="0" x2="0" y2="1">
+                {/* <linearGradient id="colorOutcome" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#EF4444" stopOpacity={0.4} />
                   <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#22C55E" stopOpacity={0.4} />
                   <stop offset="95%" stopColor="#22C55E" stopOpacity={0} />
-                </linearGradient>
+                </linearGradient> */}
               </defs>
               <CartesianGrid horizontal={false} strokeDasharray="3" />
               <Tooltip
@@ -197,40 +196,40 @@ export default function Dashboard() {
               />
               <Legend
                 align="center"
-                content={({ payload }) => (
-                  <div className="flex items-center justify-center gap-3">
-                    {payload?.map((it) => {
-                      const key = (it as any).dataKey as string
-                      return (
-                        <div
-                          key={it.id}
-                          className="font-medium cursor-pointer"
-                          onClick={() => {
-                            setChartState(
-                              produce((draft) => {
-                                draft[key] = !draft[key]
-                              })
-                            )
-                          }}
-                          style={{
-                            color: chartState[key] ? it.color : '#9CA3AF',
-                          }}
-                        >
-                          {it.legendIcon} {it.value}
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
+                // content={({ payload }) => (
+                //   <div className="flex items-center justify-center gap-3">
+                //     {payload?.map((it) => {
+                //       const key = (it as any).dataKey as string
+                //       return (
+                //         <div
+                //           key={key}
+                //           className="font-medium cursor-pointer"
+                //           onClick={() => {
+                //             setChartState(
+                //               produce((draft) => {
+                //                 draft[key] = !draft[key]
+                //               })
+                //             )
+                //           }}
+                //           style={{
+                //             color: chartState[key] ? it.color : '#9CA3AF',
+                //           }}
+                //         >
+                //           {it.legendIcon} {it.value}
+                //         </div>
+                //       )
+                //     })}
+                //   </div>
+                // )}
               />
-              <Line
+              <Area
                 dot={{
                   stroke: '#3A78F2',
                   strokeWidth: 2,
                   fill: '#ffffff',
                   r: 5,
                 }}
-                hide={!chartState.total}
+                // hide={!chartState.total}
                 name="Total"
                 type="monotone"
                 dataKey={CHART_KEY.TOTAL}
@@ -239,9 +238,9 @@ export default function Dashboard() {
                 strokeWidth={2}
                 stroke="#3A78F2"
               />
-              <Line
+              {/* <Line
                 dot={{
-                  stroke: '#3A78F2',
+                  stroke: '#22C55E',
                   strokeWidth: 2,
                   fill: '#ffffff',
                   r: 5,
@@ -257,7 +256,7 @@ export default function Dashboard() {
               />
               <Line
                 dot={{
-                  stroke: '#3A78F2',
+                  stroke: '#EF4444',
                   strokeWidth: 2,
                   fill: '#ffffff',
                   r: 5,
@@ -270,8 +269,8 @@ export default function Dashboard() {
                 fill="url(#colorOutcome)"
                 strokeWidth={2}
                 stroke="#EF4444"
-              />
-            </LineChart>
+              /> */}
+            </AreaChart>
           </ResponsiveContainer>
         )}
         <div className="min-w-full lg:min-w-[35%] max-w-[500px] lg:max-w-full order-1 lg:order-2">

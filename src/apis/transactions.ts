@@ -39,4 +39,6 @@ export const transactionsApi = {
       ENDPOINT + '/analytics',
       queries
     ),
+  delete: (transactionId: string) =>
+    httpClient<{ message: string }>('delete', ENDPOINT + '/' + transactionId),
 }

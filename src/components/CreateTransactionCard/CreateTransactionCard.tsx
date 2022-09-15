@@ -7,6 +7,7 @@ import { useToast } from '@/contexts/ToastContext'
 import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
 import { queryClient } from '@/queryClient'
 
+import { Button } from '../Button'
 import { DatePicker } from '../DatePicker'
 import { Select } from '../Select'
 import { Switch } from '../Switch'
@@ -161,9 +162,13 @@ export default function CreateTransactionCard() {
         <label htmlFor="income">Income</label>
         <Switch {...register('income')} />
       </div>
-      <button type="submit" className="col-span-2 btn btn--primary">
+      <Button
+        type="submit"
+        className="col-span-2"
+        loading={transactionCreateMutation.isLoading}
+      >
         Add transaction
-      </button>
+      </Button>
     </form>
   )
 }

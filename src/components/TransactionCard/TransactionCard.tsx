@@ -1,7 +1,11 @@
+import { useMutation } from '@tanstack/react-query'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { MdClose } from 'react-icons/md'
 
+import { transactionsApi } from '@/apis/transactions'
+import { useToast } from '@/contexts/ToastContext'
+import { queryClient } from '@/queryClient'
 import { currencyFormat } from '@/utils/utils'
 
 import { IconButton } from '../IconButton'
@@ -11,6 +15,30 @@ interface TransactionCardProps {
 }
 
 export default function TransactionCard({ data }: TransactionCardProps) {
+  const { enqueue } = useToast()
+  const deleteTransactionMutation = useMutation<
+    { message: string },
+    string,
+    string
+  >((transactionId) => transactionsApi.delete(transactionId))
+
+  const handleDeleteTransaction = async () => {
+    try {
+      const { message } = await deleteTransactionMutation.mutateAsync(data.id)
+      queryClient.invalidateQueries({
+        predicate(query) {
+          return ['transactions', 'top-transactions'].includes(
+            query.queryKey[0] as string
+          )
+        },
+        exact: false,
+      })
+      enqueue(message)
+    } catch (e) {
+      enqueue(e as string, { variant: 'error' })
+    }
+  }
+
   return (
     <div className="flex items-center gap-5 p-5 rounded-lg shadow">
       <img
@@ -41,7 +69,11 @@ export default function TransactionCard({ data }: TransactionCardProps) {
         {data.income ? '+' : '-'} {currencyFormat(data.amount)}
       </p>
       <div className="flex gap-2">
-        <IconButton icon={<MdClose className="text-gray-600" />} />
+        <IconButton
+          icon={<MdClose className="text-gray-600" />}
+          loading={deleteTransactionMutation.isLoading}
+          onClick={handleDeleteTransaction}
+        />
       </div>
     </div>
   )

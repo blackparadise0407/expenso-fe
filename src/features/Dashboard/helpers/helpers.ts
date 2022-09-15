@@ -7,8 +7,8 @@ export const getChartData = (transactions: Transaction[]) => {
     transactionDate: string
     transactions: Transaction[]
     total: number
-    income: number
-    outcome: number
+    // income?: number
+    // outcome?: number
   }>
   const result: ReturnType = []
   groupBy(
@@ -20,16 +20,18 @@ export const getChartData = (transactions: Transaction[]) => {
     })),
     (it) => it.parsedTransactionDate
   ).forEach((transactions, transactionDate) => {
+    // const incomes = transactions.filter((it) => it.income)
+    // const outcomes = transactions.filter((it) => !it.income)
     result.push({
       total: transactions.reduce((res, curr) => (res += curr.amount), 0),
       transactionDate,
       transactions,
-      income: transactions
-        .filter((it) => it.income)
-        .reduce((res, curr) => (res += curr.amount), 0),
-      outcome: transactions
-        .filter((it) => !it.income)
-        .reduce((res, curr) => (res += curr.amount), 0),
+      // income: incomes.length
+      //   ? incomes.reduce((res, curr) => (res += curr.amount), 0)
+      //   : undefined,
+      // outcome: outcomes.length
+      //   ? outcomes.reduce((res, curr) => (res += curr.amount), 0)
+      //   : undefined,
     })
   })
   return result

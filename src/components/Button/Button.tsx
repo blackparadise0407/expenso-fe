@@ -8,6 +8,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode
   variant?: ButtonVariant
   loading?: boolean
+  block?: boolean
 }
 
 const getBtnClsFromVariant = (v: ButtonVariant) => {
@@ -29,6 +30,8 @@ export default function Button({
   icon,
   loading = false,
   disabled = false,
+  block = false,
+  className,
   ...rest
 }: ButtonProps) {
   const computedDisabled = loading || disabled
@@ -39,7 +42,9 @@ export default function Button({
       className={clsx(
         'btn',
         computedDisabled && 'btn--disabled',
-        getBtnClsFromVariant(variant)
+        getBtnClsFromVariant(variant),
+        block && 'block',
+        className
       )}
     >
       {loading ? (
