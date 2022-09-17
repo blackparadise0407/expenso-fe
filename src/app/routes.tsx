@@ -8,6 +8,9 @@ const Dashboard = lazy(() => import('@/features/dashboard/views/Dashboard'))
 const CategoryList = lazy(
   () => import('@/features/categories/views/CategoryList')
 )
+const TransactionList = lazy(
+  () => import('@/features/transactions/views/TransactionList')
+)
 const Logout = lazy(() => import('@/features/auth/views/Logout'))
 
 export const appRoutes: RouteObject[] = [
@@ -16,7 +19,7 @@ export const appRoutes: RouteObject[] = [
     element: <AppLayout />,
     children: [
       { index: true, element: <Dashboard /> },
-      { path: ROUTES.TRANSACTIONS, element: <Dashboard /> },
+      { path: ROUTES.TRANSACTIONS, element: <TransactionList /> },
       { path: ROUTES.CATEGORIES, element: <CategoryList /> },
       { path: ROUTES.SETTINGS, element: <Dashboard /> },
       { path: ROUTES.LOGOUT, element: <Logout /> },
