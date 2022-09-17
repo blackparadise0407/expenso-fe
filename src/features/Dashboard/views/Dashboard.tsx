@@ -150,7 +150,6 @@ export default function Dashboard() {
       <div className="flex gap-5 flex-wrap lg:flex-nowrap">
         <div className="w-full bg-white rounded-lg shadow lg:order-1 order-2">
           {transactionsQuery.isLoading && <Loader />}
-
           {!!chartData.length && (
             <ResponsiveContainer
               className="bg-white rounded-lg shadow lg:order-1 order-2"
@@ -276,7 +275,9 @@ export default function Dashboard() {
               </AreaChart>
             </ResponsiveContainer>
           )}
-          {!chartData.length && !transactionsQuery.isLoading && <Empty />}
+          {!chartData.length && !transactionsQuery.isFetched && (
+            <Empty description="Create your transactions to see the detail analytic" />
+          )}
         </div>
         <div className="min-w-full lg:min-w-[35%] max-w-[500px] lg:max-w-full order-1 lg:order-2">
           <CreateTransactionCard />
@@ -298,7 +299,10 @@ export default function Dashboard() {
       {topTransactionsQuery.data && (
         <TransactionList transactions={topTransactionsQuery.data.docs} />
       )}
-      {!topTransactionsQuery.isLoading && !transactionsQuery.data && <Empty />}
+      {!topTransactionsQuery.isFetched &&
+        !transactionsQuery.data?.docs.length && (
+          <Empty description="Create your first transaction now" />
+        )}
     </div>
   )
 }

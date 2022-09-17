@@ -39,6 +39,8 @@ export default withAuthenticationRequired(
     )
   },
   {
-    onRedirecting: () => <div>Redirecting you to the login page...</div>,
+    onRedirecting: () => (
+      <Loader className="!h-screen" subText="Checking your credentials" />
+    ),
   }
 )

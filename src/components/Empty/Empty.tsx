@@ -4,7 +4,7 @@ import emptyBoxImg from '@/assets/images/empty-box.png?url'
 
 interface EmptyProps {
   className?: string
-  description?: string
+  description?: React.ReactNode
 }
 
 export default function Empty({

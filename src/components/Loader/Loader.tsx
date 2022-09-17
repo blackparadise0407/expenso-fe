@@ -4,9 +4,13 @@ import classes from './Loader.module.css'
 
 interface LoaderProps {
   className?: string
+  subText?: string
 }
 
-export default function Loader({ className }: LoaderProps) {
+export default function Loader({
+  className,
+  subText = 'We&apos;re loading your resources...',
+}: LoaderProps) {
   return (
     <div
       className={clsx(
@@ -20,9 +24,9 @@ export default function Loader({ className }: LoaderProps) {
         <div></div>
         <div></div>
       </div>
-      <p className="font-medium text-gray-700 animate-pulse">
-        We&apos;re loading your resources...
-      </p>
+      {!!subText && (
+        <p className="font-medium text-gray-700 animate-pulse">{subText}</p>
+      )}
     </div>
   )
 }

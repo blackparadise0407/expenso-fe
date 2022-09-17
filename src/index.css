@@ -26,7 +26,7 @@
   }
 
   a {
-    @apply no-underline;
+    @apply no-underline text-blue-500 hover:text-blue-400 transition-colors;
   }
 
   label {

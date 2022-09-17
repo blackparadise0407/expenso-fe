@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { MdOutlineAdd } from 'react-icons/md'
 
 import { Button } from '@/components/Button'
+import { Empty } from '@/components/Empty'
 import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
 
 import CategoryCardList from '../components/CategoryCardList/CategoryCardList'
@@ -36,6 +37,9 @@ export default function CategoryList() {
           categories={categoriesQuery.data}
           onEdit={handleSelectCatIdForEdit}
         />
+      )}
+      {categoriesQuery.isFetched && !categoriesQuery.data?.length && (
+        <Empty description="Create your first category" />
       )}
 
       <CategoryModal
