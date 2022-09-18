@@ -10,10 +10,10 @@ import {
 
 import { transactionsApi } from '@/apis/transactions'
 import { Empty } from '@/components/Empty'
+import { Filter } from '@/components/Filter'
 import { Loader } from '@/components/Loader'
 import { Option } from '@/components/Select/Select'
 import { SortGroup } from '@/components/SortGroup'
-import { Switch } from '@/components/Switch'
 import { TransactionCard } from '@/components/TransactionCard'
 
 export default function TransactionList() {
@@ -72,13 +72,28 @@ export default function TransactionList() {
   return (
     <div className="space-y-5">
       <div className="flex items-center">
-        <div className="form-group">
+        {/* <div className="form-group">
           <label htmlFor="income">Income</label>
           <Switch
             value={String(query.income)}
             onChange={(e) => setQuery({ income: e.target.checked })}
           />
-        </div>
+        </div> */}
+        <Filter
+          filters={[
+            { key: 'income', label: 'Income', type: 'boolean' },
+            { key: 'range', label: 'Range', type: 'range' },
+            {
+              key: 'select',
+              label: 'Select',
+              type: 'select',
+              options: [
+                { label: 'First', value: '1' },
+                { label: 'Seconds', value: '2' },
+              ],
+            },
+          ]}
+        />
         <div className="flex-grow" />
         <SortGroup sorts={sortOpts} />
       </div>
