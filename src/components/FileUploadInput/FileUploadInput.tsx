@@ -31,13 +31,13 @@ export default forwardRef<HTMLInputElement, FileUploadInputProps>(
     return (
       <input
         ref={ref}
-        {...rest}
         className={clsx(
           'h-[40px] pr-2 file:h-full file:mr-2 bg-gray-100 rounded-lg file:bg-blue-500 file:px-3 file:py-2 file:text-white file:text-sm text-sm font-medium text-gray-500 file:hover:bg-blue-400 file:cursor-pointer file:font-bold file:rounded-lg file:focus:ring-2 file:focus:ring-blue-200 file:border-none file:outline-none focus:outline-none',
           className
         )}
         onChange={handleChange}
         type="file"
+        {...rest}
       />
     )
   }

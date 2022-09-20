@@ -37,7 +37,6 @@ export default function Button({
   const computedDisabled = loading || disabled
   return (
     <button
-      {...rest}
       disabled={computedDisabled}
       className={clsx(
         'btn',
@@ -46,6 +45,7 @@ export default function Button({
         block && 'block',
         className
       )}
+      {...rest}
     >
       {loading ? (
         <AiOutlineLoading3Quarters className="text-base animate-spin mr-1" />
