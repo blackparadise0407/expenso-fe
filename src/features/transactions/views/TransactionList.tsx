@@ -5,19 +5,21 @@ import {
   DelimitedArrayParam,
   NumberParam,
   StringParam,
-  useQueryParams
+  useQueryParams,
 } from 'use-query-params'
 
-import { transactionsApi } from '@/apis/transactions'
+import { transactionsApi, TransactionsQuery } from '@/apis/transactions'
 import { Empty } from '@/components/Empty'
 import { Filter } from '@/components/Filter'
 import { Loader } from '@/components/Loader'
 import { Option } from '@/components/Select/Select'
 import { SortGroup } from '@/components/SortGroup'
 import { TransactionCard } from '@/components/TransactionCard'
+import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
 
 export default function TransactionList() {
   const firstRender = useRef(true)
+  const categoriesQuery = useCategoriesQuery(true)
   const [query, setQuery] = useQueryParams({
     pageSize: NumberParam,
     pageIndex: NumberParam,
@@ -33,7 +35,15 @@ export default function TransactionList() {
   const transactionListQuery = ((query: any) =>
     useQuery(
       ['transaction-list', JSON.stringify(query)],
-      () => transactionsApi.getAll(query),
+      () => {
+        const q: TransactionsQuery = {}
+        if (query.range) {
+          const [min, max] = query.range
+          q.min = min
+          q.max = max
+        }
+        return transactionsApi.getAll({ ...query, ...q })
+      },
       { staleTime: 60000 }
     ))(query)
 
@@ -51,6 +61,11 @@ export default function TransactionList() {
       value: 'transactionDate',
     },
   ]
+
+  const categoryOpts: Option[] = (categoriesQuery.data ?? []).map((it) => ({
+    label: it.name,
+    value: it.id,
+  }))
 
   useEffect(() => {
     if (firstRender.current) {
@@ -82,19 +97,21 @@ export default function TransactionList() {
         <Filter
           filters={[
             { key: 'income', label: 'Income', type: 'boolean' },
-            { key: 'range', label: 'Range', type: 'range', inputProps: {
-              min: 0, 
-              max: 300000,
-              step: 1000
-            } },
             {
-              key: 'select',
-              label: 'Select',
+              key: 'range',
+              label: 'Range',
+              type: 'range',
+              inputProps: {
+                min: 0,
+                max: 300000,
+                step: 1000,
+              },
+            },
+            {
+              key: 'categoryIds',
+              label: 'Category',
               type: 'select',
-              options: [
-                { label: 'First', value: '1' },
-                { label: 'Seconds', value: '2' },
-              ],
+              options: categoryOpts,
             },
           ]}
         />

@@ -1,68 +1,63 @@
-import clsx from 'clsx'
-import { forwardRef, useCallback, useEffect, useId, useState } from 'react'
-
-import { isNullOrUndefined } from '@/utils/utils'
+import { forwardRef } from 'react'
+import { getTrackBackground, Range } from 'react-range'
+import type { IProps } from 'react-range/lib/types'
 
 import './style.css'
 
-export type RangeInputProps = React.InputHTMLAttributes<HTMLInputElement>
+export type RangeInputProps = Pick<
+  IProps,
+  'min' | 'max' | 'step' | 'values' | 'onChange'
+>
 
-export default forwardRef<HTMLInputElement, RangeInputProps>(
-  function RangeInput({ className, value, min, max, ...rest }, ref) {
-    const id = useId()
-    const [progress, setProgress] = useState('')
-
-    const pos = progress.split(' ')[0] ?? '0%'
-
-    const handleInputChange = useCallback(() => {
-      if (
-        !isNullOrUndefined(value) &&
-        !isNullOrUndefined(min) &&
-        !isNullOrUndefined(max)
-      ) {
-        const _min = parseFloat(min as string)
-        const _max = parseFloat(max as string)
-        const val = parseFloat(value as string)
-        const delta = _max - _min || 1
-        setProgress(((val - _min) * 100) / delta + '% 100%')
-      }
-    }, [value])
-
-    useEffect(() => {
-      handleInputChange()
-    }, [value, handleInputChange])
-
-    return (
-      <div className="relative flex flex-col">
-        {typeof min !== 'undefined' && typeof max !== 'undefined' && (
-          <div className="flex text-sm text-gray-400 font-medium">
-            {min}
-            <div className="flex-grow"></div>
-            {max}
-          </div>
-        )}
-        <input
-          id={id}
-          ref={ref}
-          type="range"
-          min={min}
-          max={max}
-          value={value}
-          style={{ backgroundSize: progress }}
-          {...rest}
-          className={clsx('peer', className)}
-        />
-        {!isNullOrUndefined(value) && (
-          <span
-            className="peer-hover:opacity-100 opacity-0 absolute -translate-x-1/2 -translate-y-[15px] p-1 text-sm font-medium text-blue-500 grid place-content-center bg-white rounded-lg shadow transition-opacity"
+export default forwardRef<Range, RangeInputProps>(function RangeInput(
+  { min, max, step, values, ...rest },
+  ref
+) {
+  return (
+    <div className="flex flex-col">
+      {typeof min !== 'undefined' && typeof max !== 'undefined' && (
+        <div className="flex mb-2 text-sm text-gray-400 font-medium">
+          {min}
+          <div className="flex-grow"></div>
+          {max}
+        </div>
+      )}
+      <Range
+        ref={ref}
+        step={step}
+        draggableTrack
+        min={min}
+        max={max}
+        values={values}
+        renderTrack={({ props, children }) => (
+          <div
+            {...props}
+            className="w-full h-[6px] rounded-lg"
             style={{
-              left: pos,
+              ...props.style,
+              background: getTrackBackground({
+                min,
+                max,
+                values,
+                colors: ['#e5e7eb', '#3b82f6', '#e5e7eb'],
+              }),
             }}
           >
-            {value}
-          </span>
+            {children}
+          </div>
         )}
-      </div>
-    )
-  }
-)
+        renderThumb={({ props, value }) => (
+          <div
+            {...props}
+            className="relative w-[15px] h-[15px] rounded-full bg-white border-2 border-blue-500 group"
+          >
+            <div className="group-hover:opacity-100 opacity-0 absolute bottom-4 left-1/2 -translate-x-1/2 px-2 py-1 text-sm font-medium bg-white shadow rounded-lg">
+              {value}
+            </div>
+          </div>
+        )}
+        {...rest}
+      />
+    </div>
+  )
+})

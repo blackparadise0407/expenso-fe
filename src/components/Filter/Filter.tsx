@@ -1,6 +1,8 @@
 import { produce } from 'immer'
-import { memo, useCallback, useRef, useState } from 'react'
+import { parse } from 'query-string'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { MdOutlineFilterAlt } from 'react-icons/md'
+import { useLocation } from 'react-router-dom'
 
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
 import { isNullOrUndefined } from '@/utils/utils'
@@ -15,9 +17,7 @@ import { Switch } from '../Switch'
 
 type FilterType = 'select' | 'boolean' | 'range'
 
-type FilterInputProps = CheckboxProps | RangeInputProps
-
-interface InputProps extends Record<FilterType, FilterInputProps> {
+interface InputProps extends Record<FilterType, any> {
   boolean: CheckboxProps
   range: RangeInputProps
 }
@@ -32,9 +32,11 @@ export interface Filter {
   inputProps?: InputProps[Filter['type']]
 }
 
+type Value = Record<string, FilterValue>
+
 interface FilterProps {
   filters: Filter[]
-  onApply?: () => void
+  onApply?: (filters: Value) => void
 }
 
 interface FilterChange {
@@ -86,9 +88,9 @@ const FilterItem = memo(function FilterItem({
     case 'range':
       return (
         <RangeInput
-          value={value ?? 0}
-          onChange={(e) => {
-            onChange(filter.key, e.target.value)
+          values={value ?? [0, filter.inputProps.step * 50]}
+          onChange={(values) => {
+            onChange(filter.key, values)
           }}
           {...filter.inputProps}
         />
@@ -101,13 +103,20 @@ const FilterItem = memo(function FilterItem({
 export default function Filter({ filters, onApply = () => {} }: FilterProps) {
   const [open, setOpen] = useState(false)
   const filterRef = useRef<HTMLDivElement>(null)
-  const [value, setValue] = useState<Record<string, FilterValue>>({})
+  const [value, setValue] = useState<Value>({})
+
+  const { search } = useLocation()
+
   useOnClickOutside(filterRef, () => {
     setOpen(false)
   })
 
   const handleClearFilter = () => {
     setValue({})
+  }
+
+  const handleApplyFilter = () => {
+    onApply(value)
   }
 
   const handleChange: FilterChange = useCallback(
@@ -154,6 +163,20 @@ export default function Filter({ filters, onApply = () => {} }: FilterProps) {
     [filters]
   )
 
+  useEffect(() => {
+    if (!search) {
+      return
+    }
+    const queries = parse(search)
+    setValue(
+      produce((draft) => {
+        Object.keys(queries).forEach((key) => {
+          draft[key] = queries[key]
+        })
+      })
+    )
+  }, [search])
+
   return (
     <div className="relative" ref={filterRef}>
       <Button
@@ -169,7 +192,7 @@ export default function Filter({ filters, onApply = () => {} }: FilterProps) {
             <div className="flex-grow"></div>
             <div
               className="text-blue-500 font-medium text-sm hover:text-blue-400 cursor-pointer"
-              onClick={() => setValue({})}
+              onClick={handleClearFilter}
             >
               Clear all
             </div>
@@ -188,7 +211,7 @@ export default function Filter({ filters, onApply = () => {} }: FilterProps) {
               </div>
             ))}
           </div>
-          <Button block className="w-full mt-5" onClick={onApply}>
+          <Button block className="w-full mt-5" onClick={handleApplyFilter}>
             Apply
           </Button>
         </div>
