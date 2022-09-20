@@ -44,3 +44,8 @@ export const extractFileName = (fileName?: string) =>
         fileName.substring(fileName.lastIndexOf('.'), fileName.length),
       ]
     : ['', '']
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isNullOrUndefined = (v: any) => {
+  return v === undefined || v === null
+}

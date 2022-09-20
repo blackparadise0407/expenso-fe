@@ -25,7 +25,7 @@ export interface SelectChangeFn {
   (value?: string | number): void
 }
 
-interface SelectProps {
+export interface SelectProps {
   options?: Array<Option>
   defaultOpen?: boolean
   placeholder?: string

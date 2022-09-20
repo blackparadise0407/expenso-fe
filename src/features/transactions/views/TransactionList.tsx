@@ -5,7 +5,7 @@ import {
   DelimitedArrayParam,
   NumberParam,
   StringParam,
-  useQueryParams,
+  useQueryParams
 } from 'use-query-params'
 
 import { transactionsApi } from '@/apis/transactions'
@@ -82,7 +82,11 @@ export default function TransactionList() {
         <Filter
           filters={[
             { key: 'income', label: 'Income', type: 'boolean' },
-            { key: 'range', label: 'Range', type: 'range' },
+            { key: 'range', label: 'Range', type: 'range', inputProps: {
+              min: 0, 
+              max: 300000,
+              step: 1000
+            } },
             {
               key: 'select',
               label: 'Select',

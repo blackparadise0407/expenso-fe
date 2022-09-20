@@ -1,0 +1,25 @@
+input[type='range'] {
+  -webkit-appearance: none;
+  height: 8px;
+  border-radius: 5px;
+  background-image: linear-gradient(#3b82f6, #3b82f6);
+  background-repeat: no-repeat;
+  transition: height ease 0.1s;
+  @apply bg-gray-200;
+}
+
+input[type='range']:focus {
+  outline: none;
+}
+
+input[type='range']:hover {
+  cursor: pointer;
+}
+
+/* Input Thumb */
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  cursor: ew-resize;
+  border: 2px solid;
+  @apply w-[15px] h-[15px] bg-white border-2 shadow-lg border-blue-500 rounded-full transition-all;
+}
