@@ -1,5 +1,5 @@
-import clsx from 'clsx'
 import { useId } from 'react'
+import { MdCheck } from 'react-icons/md'
 
 interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -8,15 +8,16 @@ interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export default function Checkbox({ label, className, ...rest }: CheckboxProps) {
   const id = useId()
   return (
-    <div className="flex items-center">
-      <input
-        {...rest}
-        id={id}
-        type="checkbox"
-        className={clsx('w-[16px] h-[16px]', className)}
-      />
+    <div className="relative flex items-center">
+      <input {...rest} id={id} type="checkbox" className="opacity-0 peer" />
+      <div className="z-[-1] absolute top-1/2 -translate-y-1/2 left-0 grid place-content-center w-[16px] h-[16px] bg-gray-200 rounded text-transparent peer-checked:text-white peer-checked:bg-blue-500 peer-focus:ring-2 peer-focus:ring-blue-200 transition-colors">
+        <MdCheck className="text-sm" />
+      </div>
       {label && (
-        <label htmlFor={id} className="ml-2 text-sm font-medium text-gray-800">
+        <label
+          htmlFor={id}
+          className="ml-2 text-sm font-medium text-gray-800 select-none"
+        >
           {label}
         </label>
       )}
