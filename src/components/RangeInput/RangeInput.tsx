@@ -51,7 +51,7 @@ export default forwardRef<Range, RangeInputProps>(function RangeInput(
             {...props}
             className="relative w-[15px] h-[15px] rounded-full bg-white border-2 border-blue-500 group"
           >
-            <div className="group-hover:opacity-100 opacity-0 absolute bottom-4 left-1/2 -translate-x-1/2 px-2 py-1 text-sm font-medium bg-white shadow rounded-lg">
+            <div className="group-active:opacity-100 opacity-0 absolute bottom-4 left-1/2 -translate-x-1/2 px-2 py-1 text-sm font-medium bg-white shadow rounded-lg">
               {value}
             </div>
           </div>

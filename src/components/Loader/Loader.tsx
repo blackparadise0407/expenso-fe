@@ -9,7 +9,7 @@ interface LoaderProps {
 
 export default function Loader({
   className,
-  loadingText = 'We&apos;re loading your resources...',
+  loadingText = "We're loading your resources...",
 }: LoaderProps) {
   return (
     <div

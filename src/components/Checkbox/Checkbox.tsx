@@ -17,7 +17,7 @@ export default function Checkbox({ label, ...rest }: CheckboxProps) {
       {label && (
         <label
           htmlFor={id}
-          className="ml-2 text-sm font-medium text-gray-800 select-none"
+          className="ml-3 text-sm font-semibold text-gray-700 select-none cursor-pointer"
         >
           {label}
         </label>
