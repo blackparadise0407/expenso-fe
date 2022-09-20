@@ -15,6 +15,7 @@ export interface ModalProps {
   footer?: React.ReactNode
   okBtnProps?: ButtonProps
   cancelBtnProps?: ButtonProps
+  closeOnBackdropClick?: boolean
   onClose?: () => void
 }
 
@@ -26,12 +27,16 @@ export default function Modal({
   children,
   okBtnProps,
   cancelBtnProps,
+  closeOnBackdropClick = false,
   onClose,
 }: ModalProps) {
   return (
     <AnimatePresence initial={false}>
       {open && (
-        <Backdrop centerChildren>
+        <Backdrop
+          centerChildren
+          onClick={closeOnBackdropClick ? onClose : undefined}
+        >
           <motion.div
             initial={{ opacity: 0, y: -150 }}
             animate={{ opacity: 1, y: 0 }}

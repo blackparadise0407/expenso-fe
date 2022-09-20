@@ -296,13 +296,11 @@ export default function Dashboard() {
         </span>
       </div>
       {topTransactionsQuery.isLoading && <Loader />}
-      {topTransactionsQuery.data && (
+      {topTransactionsQuery.data?.docs.length ? (
         <TransactionList transactions={topTransactionsQuery.data.docs} />
+      ) : (
+        <Empty description="Create your first transaction now" />
       )}
-      {!topTransactionsQuery.isFetched &&
-        !transactionsQuery.data?.docs.length && (
-          <Empty description="Create your first transaction now" />
-        )}
     </div>
   )
 }
