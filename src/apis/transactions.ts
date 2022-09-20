@@ -16,7 +16,7 @@ export interface TransactionsQuery {
   orderBy?: keyof Transaction
   min?: number
   max?: number
-  categoryId?: string
+  categoryIds?: string
 }
 
 export type PaginatedTransactionQuery = PaginatedQuery & TransactionsQuery

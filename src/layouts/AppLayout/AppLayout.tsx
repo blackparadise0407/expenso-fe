@@ -40,10 +40,7 @@ export default withAuthenticationRequired(
   },
   {
     onRedirecting: () => (
-      <Loader
-        className="!h-screen"
-        loadingText="Redirecting you to the login page.."
-      />
+      <Loader className="!h-screen" loadingText="Checking your credentials" />
     ),
   }
 )

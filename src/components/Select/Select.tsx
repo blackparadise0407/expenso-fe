@@ -9,8 +9,12 @@ import {
   useState,
 } from 'react'
 import { MdKeyboardArrowDown } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 
+import { ROUTES } from '@/constants'
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
+
+import { Empty } from '../Empty'
 
 export interface Option<T = string> {
   value: T | undefined
@@ -136,7 +140,16 @@ export default forwardRef<HTMLDivElement, SelectProps>(function Select(
           ) : emptyContent ? (
             emptyContent
           ) : (
-            <div className="p-2 text-sm font-medium text-center">Empty</div>
+            <div className="p-2 text-sm font-medium text-center">
+              <Empty
+                description={
+                  <>
+                    <Link to={'/' + ROUTES.CATEGORIES}>Create</Link> your first
+                    category
+                  </>
+                }
+              />
+            </div>
           )}
         </ul>
       )}
