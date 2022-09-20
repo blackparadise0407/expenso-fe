@@ -34,9 +34,14 @@ export interface Filter {
 
 type Value = Record<string, FilterValue>
 
+export interface FilterApplyFn {
+  (filters: Value): void
+}
+
 interface FilterProps {
   filters: Filter[]
-  onApply?: (filters: Value) => void
+  onApply?: FilterApplyFn
+  onClear?: () => void
 }
 
 interface FilterChange {
@@ -58,7 +63,7 @@ const FilterItem = memo(function FilterItem({
     case 'boolean':
       return (
         <Switch
-          checked={value ?? ''}
+          checked={isNullOrUndefined(value) ? '' : value}
           onChange={(e) => {
             onChange(filter.key, e.target.checked)
           }}
@@ -72,9 +77,12 @@ const FilterItem = memo(function FilterItem({
             <div className="flex items-center" key={opt.value}>
               <Checkbox
                 checked={
-                  ((value as Array<string | number>) ?? []).findIndex(
-                    (it) => it === opt.value
-                  ) > -1
+                  (value
+                    ? Array.isArray(value)
+                      ? value
+                      : [value]
+                    : []
+                  ).findIndex((it) => String(it) === opt.value) > -1
                 }
                 label={opt.label}
                 onChange={() => {
@@ -88,7 +96,7 @@ const FilterItem = memo(function FilterItem({
     case 'range':
       return (
         <RangeInput
-          values={value ?? [0, filter.inputProps.step * 50]}
+          values={value ?? [0, 0]}
           onChange={(values) => {
             onChange(filter.key, values)
           }}
@@ -100,7 +108,11 @@ const FilterItem = memo(function FilterItem({
   }
 })
 
-export default function Filter({ filters, onApply = () => {} }: FilterProps) {
+export default memo(function Filter({
+  filters,
+  onApply = () => {},
+  onClear = () => {},
+}: FilterProps) {
   const [open, setOpen] = useState(false)
   const filterRef = useRef<HTMLDivElement>(null)
   const [value, setValue] = useState<Value>({})
@@ -113,10 +125,12 @@ export default function Filter({ filters, onApply = () => {} }: FilterProps) {
 
   const handleClearFilter = () => {
     setValue({})
+    onClear()
   }
 
   const handleApplyFilter = () => {
     onApply(value)
+    setOpen(false)
   }
 
   const handleChange: FilterChange = useCallback(
@@ -124,37 +138,35 @@ export default function Filter({ filters, onApply = () => {} }: FilterProps) {
       const filterIdx = filters.findIndex((it) => it.key === k)
       const filter = filters[filterIdx]
 
-      if (!filter) {
+      if (filterIdx === -1) {
         return
       }
 
       setValue(
         produce((draft) => {
-          const filterValue = draft[k]
           const filterType = filter.type
 
-          if (filterType === 'range') {
+          if (filterType === 'range' || filterType === 'boolean') {
             draft[k] = v
             return
           }
 
           if (filterType === 'select') {
             if (!isNullOrUndefined(draft[k])) {
-              const _filterValue = (filterValue ?? []) as Array<any>
-              const foundSelectOptIdx = _filterValue.findIndex((it) => it === v)
+              const foundSelectOptIdx = (
+                (draft[k] ?? []) as string[]
+              ).findIndex((it) => String(it) === v)
               if (foundSelectOptIdx > -1) {
-                _filterValue.splice(foundSelectOptIdx, 1)
+                draft[k].splice(foundSelectOptIdx, 1)
+                if (!draft[k].length) {
+                  draft[k] = undefined
+                }
               } else {
-                _filterValue.push(v)
+                draft[k].push(v)
               }
             } else {
               draft[k] = [v]
             }
-            return
-          }
-
-          if (filterType === 'boolean') {
-            draft[k] = v
             return
           }
         })
@@ -167,10 +179,30 @@ export default function Filter({ filters, onApply = () => {} }: FilterProps) {
     if (!search) {
       return
     }
-    const queries = parse(search)
+    const queries = parse(search, {
+      parseBooleans: true,
+      arrayFormat: 'comma',
+    }) as Record<string, any>
     setValue(
       produce((draft) => {
         Object.keys(queries).forEach((key) => {
+          const foundIdx = filters.findIndex((it) => it.key === key)
+          if (foundIdx > -1) {
+            const filterType = filters[foundIdx].type
+            if (filterType === 'select') {
+              draft[key] = Array(queries[key]).flat()
+              return
+            }
+
+            if (filterType === 'range') {
+              draft[key] = Array(queries[key])
+                .flat()
+                .map((it) => Number(it))
+                .sort((a, b) => a - b)
+              return
+            }
+          }
+
           draft[key] = queries[key]
         })
       })
@@ -200,7 +232,7 @@ export default function Filter({ filters, onApply = () => {} }: FilterProps) {
           <div className="mt-3 space-y-5">
             {filters.map((it) => (
               <div key={it.key} className="flex flex-col">
-                <label htmlFor={it.key} className="text-sm">
+                <label htmlFor={it.key} className="text-sm mb-1">
                   {it.label}
                 </label>
                 <FilterItem
@@ -218,4 +250,4 @@ export default function Filter({ filters, onApply = () => {} }: FilterProps) {
       )}
     </div>
   )
-}
+})

@@ -1,16 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
-import {
-  BooleanParam,
-  DelimitedArrayParam,
-  NumberParam,
-  StringParam,
-  useQueryParams,
-} from 'use-query-params'
+import { useCallback, useEffect, useRef } from 'react'
+import { NumberParam, StringParam, useQueryParams } from 'use-query-params'
 
 import { transactionsApi, TransactionsQuery } from '@/apis/transactions'
 import { Empty } from '@/components/Empty'
 import { Filter } from '@/components/Filter'
+import { FilterApplyFn } from '@/components/Filter/Filter'
 import { Loader } from '@/components/Loader'
 import { Option } from '@/components/Select/Select'
 import { SortGroup } from '@/components/SortGroup'
@@ -20,25 +15,30 @@ import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
 export default function TransactionList() {
   const firstRender = useRef(true)
   const categoriesQuery = useCategoriesQuery(true)
-  const [query, setQuery] = useQueryParams({
-    pageSize: NumberParam,
-    pageIndex: NumberParam,
-    income: BooleanParam,
-    toDate: NumberParam,
-    fromDate: NumberParam,
-    order: StringParam,
-    orderBy: StringParam,
-    min: NumberParam,
-    max: NumberParam,
-    categoryIds: DelimitedArrayParam,
-  })
+  const [query, setQuery] = useQueryParams(
+    {
+      pageSize: NumberParam,
+      pageIndex: NumberParam,
+      type: StringParam,
+      toDate: NumberParam,
+      fromDate: NumberParam,
+      order: StringParam,
+      orderBy: StringParam,
+      range: StringParam,
+      categoryIds: StringParam,
+    },
+    {
+      skipUpdateWhenNoChange: true,
+      enableBatching: true,
+    }
+  )
   const transactionListQuery = ((query: any) =>
     useQuery(
       ['transaction-list', JSON.stringify(query)],
       () => {
         const q: TransactionsQuery = {}
         if (query.range) {
-          const [min, max] = query.range
+          const [min, max] = query.range.split(',')
           q.min = min
           q.max = max
         }
@@ -67,6 +67,21 @@ export default function TransactionList() {
     value: it.id,
   }))
 
+  const handleApplyFilter: FilterApplyFn = useCallback((filters) => {
+    setQuery(filters)
+  }, [])
+
+  const handleClearFilter = useCallback(() => {
+    setQuery(
+      {
+        categoryIds: undefined,
+        range: undefined,
+        type: undefined,
+      },
+      'replaceIn'
+    )
+  }, [])
+
   useEffect(() => {
     if (firstRender.current) {
       setQuery(
@@ -87,16 +102,17 @@ export default function TransactionList() {
   return (
     <div className="space-y-5">
       <div className="flex items-center">
-        {/* <div className="form-group">
-          <label htmlFor="income">Income</label>
-          <Switch
-            value={String(query.income)}
-            onChange={(e) => setQuery({ income: e.target.checked })}
-          />
-        </div> */}
         <Filter
           filters={[
-            { key: 'income', label: 'Income', type: 'boolean' },
+            {
+              key: 'type',
+              label: 'Type',
+              type: 'select',
+              options: [
+                { value: 'true', label: 'Income' },
+                { value: 'false', label: 'Outcome' },
+              ],
+            },
             {
               key: 'range',
               label: 'Range',
@@ -114,6 +130,8 @@ export default function TransactionList() {
               options: categoryOpts,
             },
           ]}
+          onApply={handleApplyFilter}
+          onClear={handleClearFilter}
         />
         <div className="flex-grow" />
         <SortGroup sorts={sortOpts} />
