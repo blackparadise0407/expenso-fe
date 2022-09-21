@@ -149,134 +149,85 @@ export default function Dashboard() {
     <div className="space-y-5">
       <div className="flex gap-5 flex-wrap lg:flex-nowrap">
         <div className="w-full bg-white rounded-lg shadow lg:order-1 order-2">
-          {transactionsQuery.isLoading && <Loader />}
-          {!!chartData.length && (
-            <ResponsiveContainer
-              className="bg-white rounded-lg shadow lg:order-1 order-2"
-              width="100%"
-              height={500}
-            >
-              <AreaChart
-                margin={{
-                  top: 50,
-                  right: 50,
-                  left: 20,
-                  bottom: 20,
-                }}
-                data={chartData}
-              >
-                <defs>
-                  <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3A78F2" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#3A78F2" stopOpacity={0} />
-                  </linearGradient>
-                  {/* <linearGradient id="colorOutcome" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#EF4444" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#22C55E" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#22C55E" stopOpacity={0} />
-                </linearGradient> */}
-                </defs>
-                <CartesianGrid horizontal={false} strokeDasharray="3" />
-                <Tooltip
-                  wrapperStyle={{ outline: 'none' }}
-                  content={<CustomTooltip />}
-                />
-                <XAxis
-                  dataKey="transactionDate"
-                  style={{
-                    fontSize: '12px',
-                  }}
-                />
-                <YAxis
-                  tickFormatter={(value) => currencyFormat(value)}
-                  style={{
-                    fontSize: '12px',
-                  }}
-                />
-                <Legend
-                  align="center"
-                  // content={({ payload }) => (
-                  //   <div className="flex items-center justify-center gap-3">
-                  //     {payload?.map((it) => {
-                  //       const key = (it as any).dataKey as string
-                  //       return (
-                  //         <div
-                  //           key={key}
-                  //           className="font-medium cursor-pointer"
-                  //           onClick={() => {
-                  //             setChartState(
-                  //               produce((draft) => {
-                  //                 draft[key] = !draft[key]
-                  //               })
-                  //             )
-                  //           }}
-                  //           style={{
-                  //             color: chartState[key] ? it.color : '#9CA3AF',
-                  //           }}
-                  //         >
-                  //           {it.legendIcon} {it.value}
-                  //         </div>
-                  //       )
-                  //     })}
-                  //   </div>
-                  // )}
-                />
-                <Area
-                  dot={{
-                    stroke: '#3A78F2',
-                    strokeWidth: 2,
-                    fill: '#ffffff',
-                    r: 5,
-                  }}
-                  // hide={!chartState.total}
-                  name="Total"
-                  type="monotone"
-                  dataKey={CHART_KEY.TOTAL}
-                  fillOpacity={1}
-                  fill="url(#colorTotal)"
-                  strokeWidth={2}
-                  stroke="#3A78F2"
-                />
-                {/* <Line
-                dot={{
-                  stroke: '#22C55E',
-                  strokeWidth: 2,
-                  fill: '#ffffff',
-                  r: 5,
-                }}
-                hide={!chartState.income}
-                name="Income"
-                type="monotone"
-                dataKey={CHART_KEY.INCOME}
-                fillOpacity={1}
-                fill="url(#colorIncome)"
-                strokeWidth={2}
-                stroke="#22C55E"
-                />
-                <Line
-                dot={{
-                  stroke: '#EF4444',
-                  strokeWidth: 2,
-                  fill: '#ffffff',
-                  r: 5,
-                }}
-                hide={!chartState.outcome}
-                name="Outcome"
-                type="monotone"
-                dataKey={CHART_KEY.OUTCOME}
-                fillOpacity={1}
-                fill="url(#colorOutcome)"
-                strokeWidth={2}
-                stroke="#EF4444"
-              /> */}
-              </AreaChart>
-            </ResponsiveContainer>
-          )}
-          {!chartData.length && !transactionsQuery.isFetched && (
-            <Empty description="Create your transactions to see the detail analytic" />
+          {transactionsQuery.isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              {chartData.length ? (
+                <ResponsiveContainer
+                  className="bg-white rounded-lg shadow lg:order-1 order-2"
+                  width="100%"
+                  height={500}
+                >
+                  <AreaChart
+                    margin={{
+                      top: 50,
+                      right: 50,
+                      left: 20,
+                      bottom: 20,
+                    }}
+                    data={chartData}
+                  >
+                    <defs>
+                      <linearGradient
+                        id="colorTotal"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="#3A78F2"
+                          stopOpacity={0.4}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#3A78F2"
+                          stopOpacity={0}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid horizontal={false} strokeDasharray="3" />
+                    <Tooltip
+                      wrapperStyle={{ outline: 'none' }}
+                      content={<CustomTooltip />}
+                    />
+                    <XAxis
+                      dataKey="transactionDate"
+                      style={{
+                        fontSize: '12px',
+                      }}
+                    />
+                    <YAxis
+                      tickFormatter={(value) => currencyFormat(value)}
+                      style={{
+                        fontSize: '12px',
+                      }}
+                    />
+                    <Legend align="center" />
+                    <Area
+                      dot={{
+                        stroke: '#3A78F2',
+                        strokeWidth: 2,
+                        fill: '#ffffff',
+                        r: 5,
+                      }}
+                      // hide={!chartState.total}
+                      name="Total"
+                      type="monotone"
+                      dataKey={CHART_KEY.TOTAL}
+                      fillOpacity={1}
+                      fill="url(#colorTotal)"
+                      strokeWidth={2}
+                      stroke="#3A78F2"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <Empty description="Create your transactions to see the detail analytic" />
+              )}
+            </>
           )}
         </div>
         <div className="min-w-full lg:min-w-[35%] max-w-[500px] lg:max-w-full order-1 lg:order-2">
@@ -295,11 +246,16 @@ export default function Dashboard() {
           Number of transactions: {transactionsQuery.data?.totalDocs}
         </span>
       </div>
-      {topTransactionsQuery.isLoading && <Loader />}
-      {topTransactionsQuery.data?.docs.length ? (
-        <TransactionList transactions={topTransactionsQuery.data.docs} />
+      {topTransactionsQuery.isLoading ? (
+        <Loader />
       ) : (
-        <Empty description="Create your first transaction now" />
+        <>
+          {topTransactionsQuery.data?.docs.length ? (
+            <TransactionList transactions={topTransactionsQuery.data.docs} />
+          ) : (
+            <Empty description="Create your first transaction now" />
+          )}
+        </>
       )}
     </div>
   )

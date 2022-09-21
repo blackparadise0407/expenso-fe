@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { MdClose } from 'react-icons/md'
+import { MdClose, MdOutlineEditCalendar } from 'react-icons/md'
 
 import { transactionsApi } from '@/apis/transactions'
 import { useToast } from '@/contexts/ToastContext'
@@ -50,12 +50,15 @@ export default function TransactionCard({ data }: TransactionCardProps) {
       />
       <div>
         <p className="font-bold text-gray-800">{data.name}</p>
-        <p className="text-sm font-medium text-gray-400">
-          {dayjs(data.transactionDate * 1000).format('DD MMMM YYYY')}
-        </p>
+        <div className="flex items-center gap-1">
+          <MdOutlineEditCalendar className="text-sm text-gray-400" />
+          <p className="text-sm font-medium text-gray-400">
+            {dayjs(data.transactionDate * 1000).format('MMM DD, YYYY')}
+          </p>
+        </div>
       </div>
       {!!data.description && (
-        <p className="max-w-[800px] truncate text-gray-400">
+        <p className="max-w-[800px] text-sm font-medium truncate text-gray-600">
           {data.description}
         </p>
       )}

@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import { produce } from 'immer'
 import { useState } from 'react'
 import { FiEdit, FiTrash } from 'react-icons/fi'
+import { MdOutlineEditCalendar } from 'react-icons/md'
 
 import { categoriesApi } from '@/apis/categories'
 import { IconButton } from '@/components/IconButton'
@@ -48,13 +49,17 @@ export default function CategoryCard({ category, onEdit }: CategoryCardProps) {
       />
       <div>
         <p className="font-medium text-gray-900">{category.name}</p>
-        <p className="text-sm font-medium text-gray-400">
-          Created on {dayjs(category.createdAt).format('MMM DD, YYYY')}
-        </p>
+
+        <div className="flex items-center gap-1">
+          <MdOutlineEditCalendar className="text-sm text-gray-400" />
+          <p className="text-sm font-medium text-gray-400">
+            {dayjs(category.createdAt).format('MMM DD, YYYY')}
+          </p>
+        </div>
       </div>
 
       {!!category.description && (
-        <p className="text-xs font-medium text-gray-400 max-w-[50%]">
+        <p className="text-sm font-medium text-gray-600 max-w-[50%] truncate">
           {category.description}
         </p>
       )}

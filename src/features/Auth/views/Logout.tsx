@@ -1,6 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect } from 'react'
 
+import { Loader } from '@/components/Loader'
+
 export default function Logout() {
   const { logout } = useAuth0()
 
@@ -8,5 +10,5 @@ export default function Logout() {
     logout({ returnTo: window.location.origin })
   }, [])
 
-  return <div></div>
+  return <Loader loadingText="Logging you out..." />
 }
