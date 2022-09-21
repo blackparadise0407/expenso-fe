@@ -12,14 +12,15 @@ import { Checkbox } from '../Checkbox'
 import { CheckboxProps } from '../Checkbox/Checkbox'
 import { RangeInput } from '../RangeInput'
 import { RangeInputProps } from '../RangeInput/RangeInput'
-import { Option } from '../Select/Select'
+import { Option, SelectProps } from '../Select/Select'
 import { Switch } from '../Switch'
 
 type FilterType = 'select' | 'boolean' | 'range'
 
-interface InputProps extends Record<FilterType, any> {
+type InputProps = {
   boolean: CheckboxProps
   range: RangeInputProps
+  select: SelectProps
 }
 
 type FilterValue = any
@@ -158,9 +159,6 @@ export default memo(function Filter({
               ).findIndex((it) => String(it) === v)
               if (foundSelectOptIdx > -1) {
                 draft[k].splice(foundSelectOptIdx, 1)
-                if (!draft[k].length) {
-                  draft[k] = undefined
-                }
               } else {
                 draft[k].push(v)
               }

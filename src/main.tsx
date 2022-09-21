@@ -29,7 +29,12 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               adapter={ReactRouter6Adapter}
               options={{
                 searchStringToObject: parse,
-                objectToSearchString: stringify,
+                objectToSearchString: (object) =>
+                  stringify(object, {
+                    skipNull: true,
+                    skipEmptyString: true,
+                    strict: true,
+                  }),
               }}
             >
               <App />

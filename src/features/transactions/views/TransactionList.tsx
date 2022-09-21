@@ -11,6 +11,7 @@ import { Option } from '@/components/Select/Select'
 import { SortGroup } from '@/components/SortGroup'
 import { TransactionCard } from '@/components/TransactionCard'
 import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
+import { currencyFormat } from '@/utils/utils'
 
 export default function TransactionList() {
   const firstRender = useRef(true)
@@ -32,6 +33,7 @@ export default function TransactionList() {
       enableBatching: true,
     }
   )
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const transactionListQuery = ((query: any) =>
     useQuery(
       ['transaction-list', JSON.stringify(query)],
@@ -119,8 +121,9 @@ export default function TransactionList() {
               type: 'range',
               inputProps: {
                 min: 0,
-                max: 300000,
-                step: 1000,
+                max: 10000000,
+                step: 10000,
+                labelFormat: (num) => currencyFormat(num),
               },
             },
             {
