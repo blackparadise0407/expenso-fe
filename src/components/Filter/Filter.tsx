@@ -1,6 +1,6 @@
 import { produce } from 'immer'
 import { parse } from 'query-string'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, memo, useCallback, useEffect, useRef, useState } from 'react'
 import { MdOutlineFilterAlt } from 'react-icons/md'
 import { useLocation } from 'react-router-dom'
 
@@ -10,16 +10,16 @@ import { isNullOrUndefined } from '@/utils/utils'
 import { Button } from '../Button'
 import { Checkbox } from '../Checkbox'
 import { CheckboxProps } from '../Checkbox/Checkbox'
-import { RangeInput } from '../RangeInput'
-import { RangeInputProps } from '../RangeInput/RangeInput'
+import RangeSlider, { RangeSliderProps } from '../RangeSlider/RangeSlider'
 import { Option, SelectProps } from '../Select/Select'
 import { Switch } from '../Switch'
+import { SwitchProps } from '../Switch/Switch'
 
 type FilterType = 'select' | 'boolean' | 'range'
 
 type InputProps = {
   boolean: CheckboxProps
-  range: RangeInputProps
+  range: RangeSliderProps
   select: SelectProps
 }
 
@@ -68,7 +68,7 @@ const FilterItem = memo(function FilterItem({
           onChange={(e) => {
             onChange(filter.key, e.target.checked)
           }}
-          {...filter.inputProps}
+          {...(filter.inputProps as SwitchProps)}
         />
       )
     case 'select':
@@ -96,12 +96,12 @@ const FilterItem = memo(function FilterItem({
       )
     case 'range':
       return (
-        <RangeInput
-          values={value ?? [0, 0]}
+        <RangeSlider
+          {...(filter.inputProps as RangeSliderProps)}
           onChange={(values) => {
             onChange(filter.key, values)
           }}
-          {...filter.inputProps}
+          values={value ?? [0, 0]}
         />
       )
     default:
@@ -127,6 +127,7 @@ export default memo(function Filter({
   const handleClearFilter = () => {
     setValue({})
     onClear()
+    setOpen(false)
   }
 
   const handleApplyFilter = () => {
@@ -216,8 +217,8 @@ export default memo(function Filter({
         Filter
       </Button>
       {open && (
-        <div className="absolute top-[calc(100%+5px)] left-0 p-3 min-w-[240px] shadow bg-white rounded-lg z-50">
-          <div className="flex items-center">
+        <div className="absolute top-[calc(100%+5px)] left-0  min-w-[240px] shadow bg-white rounded-lg z-50">
+          <div className="flex items-center pt-3 px-3">
             <h5 className="font-semibold text-gray-900">Filter</h5>
             <div className="flex-grow"></div>
             <div
@@ -227,23 +228,28 @@ export default memo(function Filter({
               Clear all
             </div>
           </div>
-          <div className="mt-3 space-y-5">
+          <div className="mt-3">
             {filters.map((it) => (
-              <div key={it.key} className="flex flex-col">
-                <label htmlFor={it.key} className="text-sm mb-1">
-                  {it.label}
-                </label>
-                <FilterItem
-                  value={value[it.key]}
-                  filter={it}
-                  onChange={handleChange}
-                />
-              </div>
+              <Fragment key={it.key}>
+                <hr />
+                <div className="flex flex-col py-2 px-3">
+                  <label htmlFor={it.key} className="text-sm mb-1">
+                    {it.label}
+                  </label>
+                  <FilterItem
+                    value={value[it.key]}
+                    filter={it}
+                    onChange={handleChange}
+                  />
+                </div>
+              </Fragment>
             ))}
           </div>
-          <Button block className="w-full mt-5" onClick={handleApplyFilter}>
-            Apply
-          </Button>
+          <div className="pb-3 px-3">
+            <Button block className="w-full mt-5" onClick={handleApplyFilter}>
+              Apply
+            </Button>
+          </div>
         </div>
       )}
     </div>

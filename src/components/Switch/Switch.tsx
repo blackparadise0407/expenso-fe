@@ -1,6 +1,6 @@
 import { forwardRef, InputHTMLAttributes, useId } from 'react'
 
-interface SwitchProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface SwitchProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
 }
 

@@ -4,12 +4,12 @@ import type { IProps } from 'react-range/lib/types'
 
 import './style.css'
 
-export interface RangeInputProps
+export interface RangeSliderProps
   extends Pick<IProps, 'min' | 'max' | 'step' | 'values' | 'onChange'> {
   labelFormat?: (num: number) => string
 }
 
-export default forwardRef<Range, RangeInputProps>(function RangeInput(
+export default forwardRef<Range, RangeSliderProps>(function RangeSlider(
   { min, max, step, values, labelFormat = (num) => num.toString(), ...rest },
   ref
 ) {
