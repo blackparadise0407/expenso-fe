@@ -10,17 +10,29 @@ import { isNullOrUndefined } from '@/utils/utils'
 import { Button } from '../Button'
 import { Checkbox } from '../Checkbox'
 import { CheckboxProps } from '../Checkbox/Checkbox'
+import RangeInput, { RangeInputProps } from '../RangeInput/RangeInput'
 import RangeSlider, { RangeSliderProps } from '../RangeSlider/RangeSlider'
 import { Option, SelectProps } from '../Select/Select'
 import { Switch } from '../Switch'
 import { SwitchProps } from '../Switch/Switch'
 
-type FilterType = 'select' | 'boolean' | 'range'
+type FilterType = 'select' | 'boolean' | 'range' | 'rangeSlider'
+
+type FilterConfig = {
+  range: {
+    minKey: string
+    maxKey: string
+  }
+  boolean: never
+  select: never
+  rangeSlider: never
+}
 
 type InputProps = {
   boolean: CheckboxProps
-  range: RangeSliderProps
+  range: RangeInputProps
   select: SelectProps
+  rangeSlider: RangeSliderProps
 }
 
 type FilterValue = any
@@ -31,6 +43,7 @@ export interface Filter {
   type: FilterType
   options?: Option[]
   inputProps?: InputProps[Filter['type']]
+  config?: FilterConfig[Filter['type']]
 }
 
 type Value = Record<string, FilterValue>
@@ -51,6 +64,7 @@ interface FilterChange {
 
 interface FilterItemProps {
   filter: Filter
+  allValues: Value
   value: FilterValue
   onChange: FilterChange
 }
@@ -58,6 +72,7 @@ interface FilterItemProps {
 const FilterItem = memo(function FilterItem({
   filter,
   value,
+  allValues,
   onChange,
 }: FilterItemProps) {
   switch (filter.type) {
@@ -94,7 +109,7 @@ const FilterItem = memo(function FilterItem({
           ))}
         </div>
       )
-    case 'range':
+    case 'rangeSlider':
       return (
         <RangeSlider
           {...(filter.inputProps as RangeSliderProps)}
@@ -102,6 +117,19 @@ const FilterItem = memo(function FilterItem({
             onChange(filter.key, values)
           }}
           values={value ?? [0, 0]}
+        />
+      )
+    case 'range':
+      // eslint-disable-next-line no-case-declarations
+      const { minKey, maxKey } = filter.config!
+
+      return (
+        <RangeInput
+          {...(filter.inputProps as RangeInputProps)}
+          onChange={(value) => {
+            onChange(filter.key, value)
+          }}
+          value={[allValues[minKey], allValues[maxKey]]}
         />
       )
     default:
@@ -117,7 +145,6 @@ export default memo(function Filter({
   const [open, setOpen] = useState(false)
   const filterRef = useRef<HTMLDivElement>(null)
   const [value, setValue] = useState<Value>({})
-
   const { search } = useLocation()
 
   useOnClickOutside(filterRef, () => {
@@ -148,8 +175,16 @@ export default memo(function Filter({
         produce((draft) => {
           const filterType = filter.type
 
-          if (filterType === 'range' || filterType === 'boolean') {
+          if (filterType === 'rangeSlider' || filterType === 'boolean') {
             draft[k] = v
+            return
+          }
+
+          if (filterType === 'range') {
+            const { minKey, maxKey } = filter.config!
+            const [min, max] = v
+            draft[minKey] = min
+            draft[maxKey] = max
             return
           }
 
@@ -181,6 +216,7 @@ export default memo(function Filter({
     const queries = parse(search, {
       parseBooleans: true,
       arrayFormat: 'comma',
+      parseNumbers: true,
     }) as Record<string, any>
     setValue(
       produce((draft) => {
@@ -193,7 +229,7 @@ export default memo(function Filter({
               return
             }
 
-            if (filterType === 'range') {
+            if (filterType === 'rangeSlider') {
               draft[key] = Array(queries[key])
                 .flat()
                 .map((it) => Number(it))
@@ -201,7 +237,6 @@ export default memo(function Filter({
               return
             }
           }
-
           draft[key] = queries[key]
         })
       })
@@ -238,6 +273,7 @@ export default memo(function Filter({
                   </label>
                   <FilterItem
                     value={value[it.key]}
+                    allValues={value}
                     filter={it}
                     onChange={handleChange}
                   />

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useRef } from 'react'
 import { NumberParam, StringParam, useQueryParams } from 'use-query-params'
 
-import { transactionsApi, TransactionsQuery } from '@/apis/transactions'
+import { transactionsApi } from '@/apis/transactions'
 import { Empty } from '@/components/Empty'
 import { Filter } from '@/components/Filter'
 import { FilterApplyFn } from '@/components/Filter/Filter'
@@ -11,7 +11,6 @@ import { Option } from '@/components/Select/Select'
 import { SortGroup } from '@/components/SortGroup'
 import { TransactionCard } from '@/components/TransactionCard'
 import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
-import { currencyFormat } from '@/utils/utils'
 
 export default function TransactionList() {
   const firstRender = useRef(true)
@@ -20,12 +19,13 @@ export default function TransactionList() {
     {
       pageSize: NumberParam,
       pageIndex: NumberParam,
+      min: NumberParam,
+      max: NumberParam,
       type: StringParam,
       toDate: NumberParam,
       fromDate: NumberParam,
       order: StringParam,
       orderBy: StringParam,
-      range: StringParam,
       categoryIds: StringParam,
     },
     {
@@ -37,15 +37,7 @@ export default function TransactionList() {
   const transactionListQuery = ((query: any) =>
     useQuery(
       ['transaction-list', JSON.stringify(query)],
-      () => {
-        const q: TransactionsQuery = {}
-        if (query.range) {
-          const [min, max] = query.range.split(',')
-          q.min = min
-          q.max = max
-        }
-        return transactionsApi.getAll({ ...query, ...q })
-      },
+      () => transactionsApi.getAll(query),
       { staleTime: 60000 }
     ))(query)
 
@@ -77,7 +69,8 @@ export default function TransactionList() {
     setQuery(
       {
         categoryIds: undefined,
-        range: undefined,
+        min: undefined,
+        max: undefined,
         type: undefined,
       },
       'replaceIn'
@@ -119,11 +112,9 @@ export default function TransactionList() {
               key: 'range',
               label: 'Range',
               type: 'range',
-              inputProps: {
-                min: 0,
-                max: 10000000,
-                step: 10000,
-                labelFormat: (num) => currencyFormat(num),
+              config: {
+                minKey: 'min',
+                maxKey: 'max',
               },
             },
             {
