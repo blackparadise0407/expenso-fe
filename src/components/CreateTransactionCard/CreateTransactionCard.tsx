@@ -1,14 +1,17 @@
 import { useMutation } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
 
 import { transactionsApi } from '@/apis/transactions'
+import { ROUTES } from '@/constants'
 import { useToast } from '@/contexts/ToastContext'
 import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
 import { queryClient } from '@/queryClient'
 
 import { Button } from '../Button'
 import { DatePicker } from '../DatePicker'
+import { Empty } from '../Empty'
 import { Select } from '../Select'
 import { Switch } from '../Switch'
 import { TextArea } from '../TextArea'
@@ -93,6 +96,16 @@ export default function CreateTransactionCard() {
             <Select
               placeholder="Select a category"
               options={categoryOptions}
+              emptyContent={
+                <Empty
+                  description={
+                    <>
+                      <Link to={'/' + ROUTES.CATEGORIES}>Create</Link> new
+                      category
+                    </>
+                  }
+                />
+              }
               {...field}
             />
           )}
