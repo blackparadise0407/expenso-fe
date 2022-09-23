@@ -6,6 +6,7 @@ import { MdOutlineEditCalendar } from 'react-icons/md'
 
 import { categoriesApi } from '@/apis/categories'
 import { IconButton } from '@/components/IconButton'
+import { Tooltip } from '@/components/Tooltip'
 import { useToast } from '@/contexts/ToastContext'
 import { queryClient } from '@/queryClient'
 
@@ -59,9 +60,11 @@ export default function CategoryCard({ category, onEdit }: CategoryCardProps) {
       </div>
 
       {!!category.description && (
-        <p className="text-sm font-medium text-gray-600 max-w-[50%] truncate">
-          {category.description}
-        </p>
+        <Tooltip content={category.description}>
+          <p className="text-sm font-medium text-gray-600 max-w-[50%] truncate">
+            {category.description}
+          </p>
+        </Tooltip>
       )}
       <div className="flex-grow"></div>
       <div className="flex gap-2">

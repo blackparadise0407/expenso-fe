@@ -9,6 +9,7 @@ import { queryClient } from '@/queryClient'
 import { currencyFormat } from '@/utils/utils'
 
 import { IconButton } from '../IconButton'
+import { Tooltip } from '../Tooltip'
 
 interface TransactionCardProps {
   data: Transaction
@@ -58,9 +59,11 @@ export default function TransactionCard({ data }: TransactionCardProps) {
         </div>
       </div>
       {!!data.description && (
-        <p className="max-w-[800px] text-sm font-medium truncate text-gray-600">
-          {data.description}
-        </p>
+        <Tooltip content={data.description}>
+          <p className="max-w-[800px] text-sm font-medium truncate text-gray-600">
+            {data.description}
+          </p>
+        </Tooltip>
       )}
       <div className="flex-grow"></div>
       <p
