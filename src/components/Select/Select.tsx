@@ -15,12 +15,12 @@ import { useOnClickOutside } from '@/hooks/useOnClickOutside'
 import { Empty } from '../Empty'
 
 export interface Option<T = string> {
-  value: T | undefined
+  value: T
   label: string
 }
 
 export interface SelectChangeFn {
-  (value?: string | number): void
+  (value: string | number): void
 }
 
 export interface SelectProps {
