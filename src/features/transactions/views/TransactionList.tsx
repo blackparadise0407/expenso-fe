@@ -7,6 +7,8 @@ import { Empty } from '@/components/Empty'
 import { Filter } from '@/components/Filter'
 import { FilterApplyFn } from '@/components/Filter/Filter'
 import { Loader } from '@/components/Loader'
+import { Pagination } from '@/components/Pagination'
+import { PageChangeFn } from '@/components/Pagination/Pagination'
 import { Option } from '@/components/Select/Select'
 import { SortGroup } from '@/components/SortGroup'
 import { TransactionCard } from '@/components/TransactionCard'
@@ -77,6 +79,10 @@ export default function TransactionList() {
     )
   }, [])
 
+  const handlePageChange: PageChangeFn = useCallback((page) => {
+    setQuery({ pageIndex: page }, 'replaceIn')
+  }, [])
+
   useEffect(() => {
     if (firstRender.current) {
       setQuery(
@@ -138,6 +144,13 @@ export default function TransactionList() {
           <TransactionCard key={it.id} data={it} />
         ))}
       </div>
+      <Pagination
+        showSizeChanger={false}
+        currentPage={query.pageIndex ?? 1}
+        pageSize={query.pageSize ?? 10}
+        total={transactionListQuery.data?.totalDocs ?? 0}
+        onPageChange={handlePageChange}
+      />
     </div>
   )
 }
