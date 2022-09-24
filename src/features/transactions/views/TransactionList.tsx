@@ -64,7 +64,7 @@ export default function TransactionList() {
   }))
 
   const handleApplyFilter: FilterApplyFn = useCallback((filters) => {
-    setQuery(filters)
+    setQuery({ ...filters, pageIndex: 1 })
   }, [])
 
   const handleClearFilter = useCallback(() => {
@@ -74,6 +74,7 @@ export default function TransactionList() {
         min: undefined,
         max: undefined,
         type: undefined,
+        pageIndex: 1,
       },
       'replaceIn'
     )
@@ -84,11 +85,11 @@ export default function TransactionList() {
   }, [])
 
   useEffect(() => {
-    if (firstRender.current) {
+    if (firstRender.current && (!query.pageIndex || !query.pageIndex)) {
       setQuery(
         {
           pageIndex: 1,
-          pageSize: 20,
+          pageSize: 5,
         },
         'replaceIn'
       )
@@ -145,7 +146,11 @@ export default function TransactionList() {
         ))}
       </div>
       <Pagination
-        showSizeChanger={false}
+        className="mx-auto"
+        showSizeChanger
+        onShowSizeChange={(pageSize) =>
+          setQuery({ pageSize, pageIndex: 1 }, 'replaceIn')
+        }
         currentPage={query.pageIndex ?? 1}
         pageSize={query.pageSize ?? 10}
         total={transactionListQuery.data?.totalDocs ?? 0}

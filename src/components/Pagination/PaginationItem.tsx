@@ -18,7 +18,7 @@ export default function PaginationItem({
       className={clsx(
         'w-[30px] h-[30px] grid place-content-center font-medium bg-white hover:bg-blue-400 hover:!border-blue-400 hover:text-white border border-transparent shadow rounded cursor-pointer transition-colors',
         active && '!border-blue-500 text-blue-500',
-        disabled && 'text-gray-500 pointer-events-none'
+        disabled && 'text-gray-300 pointer-events-none'
       )}
       onClick={() => {
         if (disabled) {

@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { memo } from 'react'
 import { BsThreeDots } from 'react-icons/bs'
 import { MdNavigateNext } from 'react-icons/md'
@@ -30,6 +31,7 @@ export interface PaginationProps {
 
 export default memo(function Pagination({
   total,
+  className,
   siblingCount = 1,
   currentPage = 1,
   pageSize,
@@ -44,7 +46,7 @@ export default memo(function Pagination({
     pageSize,
     currentPage,
   })
-  if (currentPage === 0 || paginationRange.length < 2) {
+  if (currentPage === 0) {
     return null
   }
 
@@ -67,7 +69,7 @@ export default memo(function Pagination({
   }
 
   return (
-    <div className="flex select-none">
+    <div className={clsx('flex gap-5 select-none w-fit', className)}>
       <ul className="flex items-center gap-3">
         <li>
           <PaginationItem onClick={onPrevious} disabled={currentPage === 1}>
@@ -99,6 +101,7 @@ export default memo(function Pagination({
         <>
           <div className="flex-grow"></div>
           <Select
+            enableSearch={false}
             wrapperCls="w-[100px]"
             value={String(pageSize)}
             options={pageSizeOptions.map((option) => ({

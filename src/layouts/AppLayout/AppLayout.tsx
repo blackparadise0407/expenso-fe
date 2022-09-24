@@ -29,7 +29,10 @@ export default withAuthenticationRequired(
     return (
       <div className="flex h-screen">
         <Sidebar />
-        <main className="flex-1 px-10 py-10 space-y-5 overflow-y-auto overflow-x-hidden">
+        <main
+          id="main"
+          className="flex-1 px-10 py-10 space-y-5 overflow-y-auto overflow-x-hidden"
+        >
           <Navigation />
           <Suspense fallback={<Loader />}>
             <Outlet />

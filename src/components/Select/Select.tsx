@@ -1,7 +1,9 @@
 import clsx from 'clsx'
+import RCTooltip from 'rc-tooltip'
 import {
   ChangeEventHandler,
   forwardRef,
+  memo,
   ReactNode,
   useEffect,
   useMemo,
@@ -34,7 +36,7 @@ export interface SelectProps {
   onChange?: SelectChangeFn
 }
 
-export default forwardRef<HTMLDivElement, SelectProps>(function Select(
+const Select = forwardRef<HTMLDivElement, SelectProps>(function Select(
   {
     options = [],
     defaultOpen = false,
@@ -50,11 +52,15 @@ export default forwardRef<HTMLDivElement, SelectProps>(function Select(
   const [innerVal, setInnerVal] = useState(value)
   const [open, setOpen] = useState(defaultOpen)
   const divRef = useRef<HTMLDivElement>(null)
+  const ulRef = useRef<HTMLUListElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const selectDivRef = useRef<HTMLInputElement>(null)
   const [searchTerm, setSearchTerm] = useState('')
 
-  useOnClickOutside(divRef, () => {
+  useOnClickOutside(divRef, (e) => {
+    const el = ulRef.current
+    if (!el || el.contains(e.target as Node)) {
+      return
+    }
     setOpen(false)
   })
 
@@ -82,41 +88,26 @@ export default forwardRef<HTMLDivElement, SelectProps>(function Select(
     }
   }, [open])
 
+  useEffect(() => {
+    const main = document.getElementById('main')!
+    if (open) {
+      main.style.overflowY = 'hidden'
+    } else {
+      main.style.overflowY = 'auto'
+    }
+  }, [open])
+
   return (
-    <div className={clsx('w-full relative', wrapperCls)} ref={divRef}>
-      <div
-        className={clsx(
-          'z-[5] relative h-[40px] flex items-center py-2 pl-3 pr-5 font-medium text-gray-900 rounded-lg bg-gray-100 outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer',
-          open && 'outline-none ring-2 ring-blue-200'
-        )}
-        onClick={() => {
-          setOpen(true)
-          selectDivRef.current?.focus()
-        }}
-        ref={ref}
-      >
-        <input
-          ref={inputRef}
-          className={clsx(
-            'w-full font-medium outline-none border-none bg-transparent',
-            innerVal ? 'placeholder:text-gray-900' : 'placeholder:text-sm'
-          )}
-          placeholder={
-            options[options.findIndex((it) => it.value === innerVal)]?.label ??
-            placeholder
-          }
-          onChange={handleSearch}
-          readOnly={!enableSearch}
-        />
-        <MdKeyboardArrowDown
-          className={clsx(
-            'absolute top-1/2 right-1 -translate-y-1/2 text-lg transition-transform',
-            open && 'rotate-180'
-          )}
-        />
-      </div>
-      {open && (
-        <ul className="absolute max-h-[500px] top-[calc(100%+5px)] left-0 w-full rounded-lg shadow bg-white z-10 overflow-y-auto">
+    <RCTooltip
+      placement="bottomLeft"
+      visible={open}
+      destroyTooltipOnHide
+      overlayStyle={{ width: divRef.current?.clientWidth, padding: '5px 0' }}
+      overlay={
+        <ul
+          ref={ulRef}
+          className="max-h-[500px] rounded-lg shadow bg-white overflow-y-auto"
+        >
           {derivedOptions.length ? (
             derivedOptions.map((it, idx) => (
               <li
@@ -124,7 +115,7 @@ export default forwardRef<HTMLDivElement, SelectProps>(function Select(
                 className={clsx(
                   'px-2 py-1.5 font-semibold text-gray-600 text-sm hover:bg-gray-100 hover:text-gray-900 transition-colors cursor-pointer truncate',
                   selectedOptionsIdx === idx &&
-                    'bg-blue-500 text-white hover:bg-blue-400 hover:text-white'
+                    'bg-blue-500 text-white pointer-events-none'
                 )}
                 onClick={() => {
                   setInnerVal(it.value)
@@ -141,7 +132,42 @@ export default forwardRef<HTMLDivElement, SelectProps>(function Select(
             </div>
           )}
         </ul>
-      )}
-    </div>
+      }
+    >
+      <div className={clsx('w-full relative', wrapperCls)} ref={divRef}>
+        <div
+          className={clsx(
+            'z-[5] relative h-[40px] flex items-center py-2 pl-3 pr-5 font-medium text-gray-900 rounded-lg bg-gray-100 outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer',
+            open && 'outline-none ring-2 ring-blue-200'
+          )}
+          onClick={() => {
+            setOpen((p) => !p)
+          }}
+          ref={ref}
+        >
+          <input
+            ref={inputRef}
+            className={clsx(
+              'w-full font-medium outline-none border-none bg-transparent cursor-pointer',
+              innerVal ? 'placeholder:text-gray-900' : 'placeholder:text-sm'
+            )}
+            placeholder={
+              options[options.findIndex((it) => it.value === innerVal)]
+                ?.label ?? placeholder
+            }
+            onChange={handleSearch}
+            readOnly={!enableSearch}
+          />
+          <MdKeyboardArrowDown
+            className={clsx(
+              'absolute top-1/2 right-1 -translate-y-1/2 text-lg transition-transform',
+              open && 'rotate-180'
+            )}
+          />
+        </div>
+      </div>
+    </RCTooltip>
   )
 })
+
+export default memo(Select)

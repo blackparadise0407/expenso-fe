@@ -59,7 +59,7 @@ export default function TransactionCard({ data }: TransactionCardProps) {
         </div>
       </div>
       {!!data.description && (
-        <Tooltip content={data.description}>
+        <Tooltip overlay={data.description}>
           <p className="max-w-[800px] text-sm font-medium truncate text-gray-600">
             {data.description}
           </p>

@@ -60,7 +60,7 @@ export default function CategoryCard({ category, onEdit }: CategoryCardProps) {
       </div>
 
       {!!category.description && (
-        <Tooltip content={category.description}>
+        <Tooltip overlay={category.description}>
           <p className="text-sm font-medium text-gray-600 max-w-[50%] truncate">
             {category.description}
           </p>
