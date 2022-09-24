@@ -70,7 +70,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>(function Select(
 
   const derivedOptions = useMemo(() => {
     if (!searchTerm) return options
-    return options.filter((it) => new RegExp(searchTerm).test(it.label))
+    return options.filter((it) => new RegExp(searchTerm, 'i').test(it.label))
   }, [searchTerm, options])
 
   const selectedOptionsIdx = derivedOptions.findIndex(
