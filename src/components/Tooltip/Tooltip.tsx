@@ -125,7 +125,8 @@ export default memo(function Tooltip({
       mouseEnterDelay={mouseEnterDelay}
       mouseLeaveDelay={mouseLeaveDelay}
       placement={placement}
-      overlayClassName="w-fit px-2 py-1.5 text-sm font-medium text-gray-900 bg-white shadow rounded-lg z-50"
+      zIndex={100}
+      overlayClassName="w-fit px-2 py-1.5 text-sm font-medium text-gray-900 bg-white shadow rounded-lg z-[1000]"
       {...rest}
     >
       {children}

@@ -102,7 +102,11 @@ const Select = forwardRef<HTMLDivElement, SelectProps>(function Select(
       placement="bottomLeft"
       visible={open}
       destroyTooltipOnHide
-      overlayStyle={{ width: divRef.current?.clientWidth, padding: '5px 0' }}
+      zIndex={100}
+      overlayStyle={{
+        width: divRef.current?.clientWidth,
+        padding: '5px 0',
+      }}
       overlay={
         <ul
           ref={ulRef}
