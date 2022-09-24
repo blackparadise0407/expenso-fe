@@ -146,7 +146,6 @@ export default function TransactionList() {
         ))}
       </div>
       <Pagination
-        className="mx-auto"
         showSizeChanger
         onShowSizeChange={(pageSize) =>
           setQuery({ pageSize, pageIndex: 1 }, 'replaceIn')

@@ -69,7 +69,7 @@ export default memo(function Pagination({
   }
 
   return (
-    <div className={clsx('flex gap-5 select-none w-fit', className)}>
+    <div className={clsx('flex gap-5 select-none', className)}>
       <ul className="flex items-center gap-3">
         <li>
           <PaginationItem onClick={onPrevious} disabled={currentPage === 1}>
