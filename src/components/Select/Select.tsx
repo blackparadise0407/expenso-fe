@@ -33,6 +33,7 @@ export interface SelectProps {
   value?: string | number
   emptyContent?: ReactNode
   wrapperCls?: string
+  disabled?: boolean
   onChange?: SelectChangeFn
 }
 
@@ -45,6 +46,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>(function Select(
     enableSearch = true,
     emptyContent,
     wrapperCls,
+    disabled = false,
     onChange = () => {},
   }: SelectProps,
   ref
@@ -138,14 +140,21 @@ const Select = forwardRef<HTMLDivElement, SelectProps>(function Select(
         </ul>
       }
     >
-      <div className={clsx('w-full relative', wrapperCls)} ref={divRef}>
+      <div
+        className={clsx(
+          'w-full relative',
+          disabled && 'pointer-events-none',
+          wrapperCls
+        )}
+        ref={divRef}
+      >
         <div
           className={clsx(
             'z-[5] relative h-[40px] flex items-center py-2 pl-3 pr-5 font-medium text-gray-900 rounded-lg bg-gray-100 outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer',
             open && 'outline-none ring-2 ring-blue-200'
           )}
           onClick={() => {
-            setOpen((p) => !p)
+            !disabled && setOpen((p) => !p)
           }}
           ref={ref}
         >
@@ -153,7 +162,8 @@ const Select = forwardRef<HTMLDivElement, SelectProps>(function Select(
             ref={inputRef}
             className={clsx(
               'w-full font-medium outline-none border-none bg-transparent cursor-pointer',
-              innerVal ? 'placeholder:text-gray-900' : 'placeholder:text-sm'
+              innerVal ? 'placeholder:text-gray-900' : 'placeholder:text-sm',
+              disabled && 'placeholder:text-gray-400'
             )}
             placeholder={
               options[options.findIndex((it) => it.value === innerVal)]
@@ -165,7 +175,8 @@ const Select = forwardRef<HTMLDivElement, SelectProps>(function Select(
           <MdKeyboardArrowDown
             className={clsx(
               'absolute top-1/2 right-1 -translate-y-1/2 text-lg transition-transform',
-              open && 'rotate-180'
+              open && 'rotate-180',
+              disabled && 'text-gray-400'
             )}
           />
         </div>
