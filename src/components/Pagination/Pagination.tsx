@@ -92,7 +92,10 @@ export default memo(function Pagination({
           </li>
         ))}
         <li>
-          <PaginationItem disabled={currentPage === lastPage} onClick={onNext}>
+          <PaginationItem
+            disabled={currentPage === lastPage || total === 0}
+            onClick={onNext}
+          >
             <MdNavigateNext className="text-lg" />
           </PaginationItem>
         </li>
@@ -101,6 +104,7 @@ export default memo(function Pagination({
         <>
           <div className="flex-grow"></div>
           <Select
+            disabled={total === 0}
             enableSearch={false}
             wrapperCls="w-[100px]"
             value={String(pageSize)}
