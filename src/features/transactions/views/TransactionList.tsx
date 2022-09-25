@@ -89,7 +89,7 @@ export default function TransactionList() {
       setQuery(
         {
           pageIndex: 1,
-          pageSize: 5,
+          pageSize: 10,
         },
         'replaceIn'
       )

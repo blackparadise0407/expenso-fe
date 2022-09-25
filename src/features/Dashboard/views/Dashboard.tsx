@@ -19,9 +19,9 @@ import { StringParam, useQueryParams } from 'use-query-params'
 import { transactionsApi, TransactionsQuery } from '@/apis/transactions'
 import { CreateTransactionCard } from '@/components/CreateTransactionCard'
 import { Empty } from '@/components/Empty'
-import { Loader } from '@/components/Loader'
 import { Option } from '@/components/Select/Select'
 import { SortGroup } from '@/components/SortGroup'
+import { StateWrapper } from '@/components/StateWrapper'
 import { TransactionCard } from '@/components/TransactionCard'
 import { currencyFormat } from '@/utils/utils'
 
@@ -92,11 +92,7 @@ const CHART_KEY = {
 
 export default function Dashboard() {
   const [query] = useQueryParams({ orderBy: StringParam, order: StringParam })
-  // const [chartState, setChartState] = useState<Record<string, boolean>>({
-  //   [CHART_KEY.TOTAL]: true,
-  //   [CHART_KEY.INCOME]: true,
-  //   [CHART_KEY.OUTCOME]: true,
-  // })
+
   const topTransactionsQuery = ((query: TransactionsQuery) =>
     useQuery(
       ['top-transactions', JSON.stringify(query)],
@@ -149,86 +145,70 @@ export default function Dashboard() {
     <div className="space-y-5">
       <div className="flex gap-5 flex-wrap lg:flex-nowrap">
         <div className="w-full bg-white rounded-lg shadow lg:order-1 order-2">
-          {transactionsQuery.isLoading ? (
-            <Loader />
-          ) : (
-            <>
-              {chartData.length ? (
-                <ResponsiveContainer
-                  className="bg-white rounded-lg shadow lg:order-1 order-2"
-                  width="100%"
-                  height={500}
+          <StateWrapper
+            loading={transactionsQuery.isLoading}
+            empty={!chartData.length}
+            emptyComponent={
+              <Empty description="Create your transactions to see the detail analytic" />
+            }
+            fulfilledComponent={
+              <ResponsiveContainer
+                className="bg-white rounded-lg shadow lg:order-1 order-2"
+                width="100%"
+                height={500}
+              >
+                <AreaChart
+                  margin={{
+                    top: 50,
+                    right: 50,
+                    left: 20,
+                    bottom: 20,
+                  }}
+                  data={chartData}
                 >
-                  <AreaChart
-                    margin={{
-                      top: 50,
-                      right: 50,
-                      left: 20,
-                      bottom: 20,
+                  <defs>
+                    <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3A78F2" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#3A78F2" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid horizontal={false} strokeDasharray="3" />
+                  <Tooltip
+                    wrapperStyle={{ outline: 'none' }}
+                    content={<CustomTooltip />}
+                  />
+                  <XAxis
+                    dataKey="transactionDate"
+                    style={{
+                      fontSize: '12px',
                     }}
-                    data={chartData}
-                  >
-                    <defs>
-                      <linearGradient
-                        id="colorTotal"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor="#3A78F2"
-                          stopOpacity={0.4}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="#3A78F2"
-                          stopOpacity={0}
-                        />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid horizontal={false} strokeDasharray="3" />
-                    <Tooltip
-                      wrapperStyle={{ outline: 'none' }}
-                      content={<CustomTooltip />}
-                    />
-                    <XAxis
-                      dataKey="transactionDate"
-                      style={{
-                        fontSize: '12px',
-                      }}
-                    />
-                    <YAxis
-                      tickFormatter={(value) => currencyFormat(value)}
-                      style={{
-                        fontSize: '12px',
-                      }}
-                    />
-                    <Legend align="center" />
-                    <Area
-                      dot={{
-                        stroke: '#3A78F2',
-                        strokeWidth: 2,
-                        fill: '#ffffff',
-                        r: 5,
-                      }}
-                      // hide={!chartState.total}
-                      name="Total"
-                      type="monotone"
-                      dataKey={CHART_KEY.TOTAL}
-                      fillOpacity={1}
-                      fill="url(#colorTotal)"
-                      strokeWidth={2}
-                      stroke="#3A78F2"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              ) : (
-                <Empty description="Create your transactions to see the detail analytic" />
-              )}
-            </>
-          )}
+                  />
+                  <YAxis
+                    tickFormatter={(value) => currencyFormat(value)}
+                    style={{
+                      fontSize: '12px',
+                    }}
+                  />
+                  <Legend align="center" />
+                  <Area
+                    dot={{
+                      stroke: '#3A78F2',
+                      strokeWidth: 2,
+                      fill: '#ffffff',
+                      r: 5,
+                    }}
+                    name="Total"
+                    type="monotone"
+                    dataKey={CHART_KEY.TOTAL}
+                    fillOpacity={1}
+                    fill="url(#colorTotal)"
+                    strokeWidth={2}
+                    stroke="#3A78F2"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            }
+          />
         </div>
         <div className="min-w-full lg:min-w-[35%] max-w-[500px] lg:max-w-full order-1 lg:order-2">
           <CreateTransactionCard />
@@ -246,17 +226,20 @@ export default function Dashboard() {
           Number of transactions: {transactionsQuery.data?.totalDocs}
         </span>
       </div>
-      {topTransactionsQuery.isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          {topTransactionsQuery.data?.docs.length ? (
-            <TransactionList transactions={topTransactionsQuery.data.docs} />
-          ) : (
-            <Empty description="Create your first transaction now" />
-          )}
-        </>
-      )}
+
+      <StateWrapper
+        loading={topTransactionsQuery.isLoading}
+        error={topTransactionsQuery.error as string}
+        empty={!topTransactionsQuery.data?.docs.length}
+        emptyComponent={
+          <Empty description="Create your first transaction now" />
+        }
+        fulfilledComponent={
+          <TransactionList
+            transactions={topTransactionsQuery.data?.docs ?? []}
+          />
+        }
+      />
     </div>
   )
 }
