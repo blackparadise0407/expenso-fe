@@ -14,4 +14,7 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            whoami
+            cd ~/expenso-fe
+            rm -rf dist
+            git pull
+            yarn build
