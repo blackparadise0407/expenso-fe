@@ -2,11 +2,11 @@ name: Github Actions CD
 run-name: ${{ github.actor }} is deploying Expenso FE
 on: [push]
 jobs:
-  Continuous-Deployment-Actions:
+  build:
+    name: Build and deploy
     runs-on: ubuntu-latest
     steps:
       - name: Executing remote ssh commands
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
