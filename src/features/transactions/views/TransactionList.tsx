@@ -14,7 +14,7 @@ import { SortGroup } from '@/components/SortGroup'
 import { TransactionCard } from '@/components/TransactionCard'
 import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
 
-export default function TransactionList() {
+export function TransactionList() {
   const firstRender = useRef(true)
   const categoriesQuery = useCategoriesQuery(true)
   const [query, setQuery] = useQueryParams(

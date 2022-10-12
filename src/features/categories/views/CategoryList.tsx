@@ -8,7 +8,7 @@ import { useCategoriesQuery } from '@/hooks/useCategoriesQuery'
 import CategoryCardList from '../components/CategoryCardList/CategoryCardList'
 import CategoryModal from '../components/CategoryModal/CategoryModal'
 
-export default function CategoryList() {
+export function CategoryList() {
   const [createCatModalOpen, setCreateCatModalOpen] = useState(false)
   const [selectedCategoryId, setSelectedCategoryId] = useState('')
   const categoriesQuery = useCategoriesQuery(true)

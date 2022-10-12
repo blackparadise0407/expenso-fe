@@ -90,7 +90,7 @@ const CHART_KEY = {
   OUTCOME: 'outcome',
 }
 
-export default function Dashboard() {
+export function Dashboard() {
   const [query] = useQueryParams({ orderBy: StringParam, order: StringParam })
 
   const topTransactionsQuery = ((query: TransactionsQuery) =>

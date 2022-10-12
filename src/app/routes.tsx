@@ -6,22 +6,22 @@ import { AppLayout } from '@/layouts/AppLayout'
 
 const Dashboard = lazy(() =>
   import('@/features/dashboard/views/Dashboard').then((m) => ({
-    default: m.default,
+    default: m.Dashboard,
   }))
 )
 const CategoryList = lazy(() =>
   import('@/features/categories/views/CategoryList').then((m) => ({
-    default: m.default,
+    default: m.CategoryList,
   }))
 )
 const TransactionList = lazy(() =>
   import('@/features/transactions/views/TransactionList').then((m) => ({
-    default: m.default,
+    default: m.TransactionList,
   }))
 )
 const Logout = lazy(() =>
   import('@/features/auth/views/Logout').then((m) => ({
-    default: m.default,
+    default: m.Logout,
   }))
 )
 
