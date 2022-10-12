@@ -10,6 +10,7 @@ jobs:
 
     steps:
       - run: pwd
+      - run: ls
       - uses: actions/checkout@v3
 
       - uses: actions/setup-node@v3
