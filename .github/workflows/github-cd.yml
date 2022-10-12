@@ -17,4 +17,5 @@ jobs:
             cd ~/expenso-fe
             rm -rf dist
             git pull
+            yarn
             yarn build
