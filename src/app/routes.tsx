@@ -7,23 +7,23 @@ import { AppLayout } from '@/layouts/AppLayout'
 
 // @ts-ignore
 const Dashboard = lazy(() =>
-  import('@/features/dashboard/views/Dashboard').then((m) => ({
+  import('../features/dashboard/views/Dashboard').then((m) => ({
     default: m.Dashboard,
   }))
 )
 const CategoryList = lazy(() =>
-  import('@/features/categories/views/CategoryList').then((m) => ({
+  import('../features/categories/views/CategoryList').then((m) => ({
     default: m.CategoryList,
   }))
 )
 const TransactionList = lazy(() =>
-  import('@/features/transactions/views/TransactionList').then((m) => ({
+  import('../features/transactions/views/TransactionList').then((m) => ({
     default: m.TransactionList,
   }))
 )
 // @ts-ignore
 const Logout = lazy(() =>
-  import('@/features/auth/views/Logout').then((m) => ({
+  import('../features/auth/views/Logout').then((m) => ({
     default: m.Logout,
   }))
 )
