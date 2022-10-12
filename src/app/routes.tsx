@@ -4,14 +4,26 @@ import { RouteObject } from 'react-router-dom'
 import { ROUTES } from '@/constants'
 import { AppLayout } from '@/layouts/AppLayout'
 
-const Dashboard = lazy(() => import('../features/dashboard/views/Dashboard'))
-const CategoryList = lazy(
-  () => import('../features/categories/views/CategoryList')
+const Dashboard = lazy(() =>
+  import('@/features/dashboard/views/Dashboard').then((m) => ({
+    default: m.default,
+  }))
 )
-const TransactionList = lazy(
-  () => import('../features/transactions/views/TransactionList')
+const CategoryList = lazy(() =>
+  import('@/features/categories/views/CategoryList').then((m) => ({
+    default: m.default,
+  }))
 )
-const Logout = lazy(() => import('../features/auth/views/Logout'))
+const TransactionList = lazy(() =>
+  import('@/features/transactions/views/TransactionList').then((m) => ({
+    default: m.default,
+  }))
+)
+const Logout = lazy(() =>
+  import('@/features/auth/views/Logout').then((m) => ({
+    default: m.default,
+  }))
+)
 
 export const appRoutes: RouteObject[] = [
   {
