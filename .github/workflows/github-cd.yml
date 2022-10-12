@@ -1,21 +1,21 @@
 name: Github Actions CD
 run-name: ${{ github.actor }} is deploying Expenso FE
-on: [push]
+on:
+  push:
+    branches: [master]
 jobs:
   build:
-    name: Build and deploy
+    name: Build
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x]
+
     steps:
-      - name: Executing remote ssh commands
-        uses: appleboy/ssh-action@master
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            cd ~/expenso-fe
-            rm -rf dist
-            git pull
-            yarn
-            yarn build
+          node-version: ${{ matrix.node-version }}
+      - run: yarn build --if-present
