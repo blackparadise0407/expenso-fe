@@ -6,7 +6,7 @@ import { ROUTES } from '@/constants'
 import { AppLayout } from '@/layouts/AppLayout'
 
 // @ts-ignore
-const Dashboard = lazy(() => import('@/features/dashboard/views/Dashboard'))
+const Dashboard = lazy(() => import('@/features/dashboard/views/Dashboard.tsx'))
 const CategoryList = lazy(
   () => import('@/features/categories/views/CategoryList')
 )
@@ -14,7 +14,7 @@ const TransactionList = lazy(
   () => import('@/features/transactions/views/TransactionList')
 )
 // @ts-ignore
-const Logout = lazy(() => import('@/features/auth/views/Logout'))
+const Logout = lazy(() => import('@/features/auth/views/Logout.tsx'))
 
 export const appRoutes: RouteObject[] = [
   {
