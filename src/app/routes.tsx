@@ -7,7 +7,7 @@ import { AppLayout } from '@/layouts/AppLayout'
 
 const Dashboard = lazy(
   // @ts-ignore
-  () => import('../features/dashboard/views/Dashboard')
+  () => import('@/features/dashboard/views/Dashboard')
 )
 const CategoryList = lazy(() =>
   import('@/features/categories/views/CategoryList').then((m) => ({
