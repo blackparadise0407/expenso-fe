@@ -5,7 +5,7 @@ import { ROUTES } from '@/constants'
 import { AppLayout } from '@/layouts/AppLayout'
 
 const Dashboard = lazy(() =>
-  import('../features/dashboard/views').then((m) => ({
+  import('@/features/dashboard/views').then((m) => ({
     default: m.Dashboard,
   }))
 )
@@ -20,7 +20,7 @@ const TransactionList = lazy(() =>
   }))
 )
 const Logout = lazy(() =>
-  import('../features/auth/views').then((m) => ({
+  import('@/features/auth/views').then((m) => ({
     default: m.Logout,
   }))
 )
