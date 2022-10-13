@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 
 import { Loader } from '@/components/Loader'
 
-export function Logout() {
+export default function Logout() {
   const { logout } = useAuth0()
 
   useEffect(() => {

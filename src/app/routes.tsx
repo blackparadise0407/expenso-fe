@@ -1,13 +1,13 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { lazy } from 'react'
 import { RouteObject } from 'react-router-dom'
 
 import { ROUTES } from '@/constants'
 import { AppLayout } from '@/layouts/AppLayout'
 
-const Dashboard = lazy(() =>
-  import('@/features/dashboard/views').then((m) => ({
-    default: m.Dashboard,
-  }))
+const Dashboard = lazy(
+  // @ts-ignore
+  () => import('../features/dashboard/views/Dashboard.tsx')
 )
 const CategoryList = lazy(() =>
   import('@/features/categories/views/CategoryList').then((m) => ({
@@ -19,11 +19,8 @@ const TransactionList = lazy(() =>
     default: m.TransactionList,
   }))
 )
-const Logout = lazy(() =>
-  import('@/features/auth/views').then((m) => ({
-    default: m.Logout,
-  }))
-)
+// @ts-ignore
+const Logout = lazy(() => import('@/features/auth/views/Logout.tsx'))
 
 export const appRoutes: RouteObject[] = [
   {
