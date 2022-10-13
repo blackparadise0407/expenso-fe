@@ -7,7 +7,7 @@ import { AppLayout } from '@/layouts/AppLayout'
 
 const Dashboard = lazy(
   // @ts-ignore
-  () => import('../features/dashboard/views/Dashboard.tsx')
+  () => import('../features/dashboard/views/Dashboard')
 )
 const CategoryList = lazy(() =>
   import('@/features/categories/views/CategoryList').then((m) => ({
@@ -20,7 +20,7 @@ const TransactionList = lazy(() =>
   }))
 )
 // @ts-ignore
-const Logout = lazy(() => import('@/features/auth/views/Logout.tsx'))
+const Logout = lazy(() => import('@/features/auth/views/Logout'))
 
 export const appRoutes: RouteObject[] = [
   {
